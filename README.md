@@ -202,6 +202,24 @@ interpretácia slniečka**, ktoré bolo na pôvodnej úvodnej stránke — hrub�
 zaoblené lúče namiesto vlasových čiar a kotúč s prechodom zo žltej do
 oranžovej. Nie je to kópia, ale motív je pôvodný.
 
+**Pôvodná kresba centra je zachovaná ako vektor:**
+
+| Súbor | Kde sa používa |
+|---|---|
+| `assets/logo-babyland.svg` | nápis BABYLAND v hlavičke a v pätičke |
+| `assets/img/babyland-kresba.svg` | celá kresba (slniečko + nápis + dve deti) na úvodnej stránke, slovenskej aj anglickej |
+
+Nápis je **vytrasovaný priamo z pôvodného obrázka**, takže tvar písmen je
+zachovaný presne — vrátane zvislého prechodu z oranžovej cez žltú späť do
+oranžovej. Slniečko a postavičky sú prekreslené načisto: pôvodné ceruzkové
+čiary boli v 87 px predlohe príliš roztrasené na to, aby sa dali zväčšiť.
+Kompozícia, proporcie aj farby (žlté slnko, oranžové šaty `#FF9900`, zelené
+tričko `#99CC00`) ostali rovnaké; obrysy sú v teplej hnedej namiesto čiernej,
+aby ladili so zvyškom webu.
+
+Keďže je to vektor, kresba je ostrá v akejkoľvek veľkosti aj pri tlači.
+Veľkosť na stránke sa mení v `css/styles.css` → `.artwork img { max-width }`.
+
 Ikony v `assets/` (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`,
 `icon-512.png`) aj `og-image.png` sa **generujú z SVG** — po zmene značky
 alebo farieb ich prekreslite:

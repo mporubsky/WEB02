@@ -232,8 +232,11 @@ p:last-child { margin-bottom: 0; }
 .brand { display: inline-flex; align-items: center; gap: .6rem; color: var(--c-dark); font-weight: 800; }
 .brand:hover { color: var(--c-dark); }
 .brand__mark { width: 40px; height: 40px; flex: none; }
+@media (max-width: 380px) { .brand__word { height: 18px; } .brand__mark { width: 34px; height: 34px; } }
 .brand__text { display: flex; flex-direction: column; line-height: 1.05; }
-.brand__name { font-size: 1.18rem; letter-spacing: -.01em; }
+/* Nápis BABYLAND je vektor vytrasovaný z pôvodného loga (assets/logo-babyland.svg).
+   Šírka sa dopočíta z pomeru strán, aby sa nedeformoval. */
+.brand__word { height: 21px; width: auto; }
 .brand__tag { font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--c-muted); }
 
 .header-phone { display: inline-flex; align-items: center; gap: .45rem; font-weight: 700; color: var(--c-dark); white-space: nowrap; }
@@ -505,6 +508,11 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 }
 .quote p { font-size: var(--fs-500); font-style: italic; color: var(--c-dark); margin: 0; }
 
+/* Pôvodná kresba centra (slniečko + nápis + dve deti). Vektor, takže je
+   ostrá v každej veľkosti; na mobile sa zmenší spolu s kontajnerom. */
+.artwork { margin: 0 0 1.75rem; }
+.artwork img { width: 100%; max-width: 560px; height: auto; margin-inline: auto; }
+
 /* 16. FAREBNÉ BODKY ===================================================== */
 .dots { display: flex; gap: .55rem; justify-content: center; margin-bottom: 1.1rem; }
 .dots i { width: 13px; height: 13px; border-radius: 50%; display: block; }
@@ -525,7 +533,7 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 @media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; } }
 
 .footer-about .brand { color: #fff; margin-bottom: 1rem; }
-.footer-about .brand__name { color: #fff; }
+
 .footer-about .brand__tag { color: #DBC8B6; }
 .footer-about p { font-size: var(--fs-300); color: #BFA890; }
 
