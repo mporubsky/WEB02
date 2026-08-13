@@ -36,7 +36,19 @@ for f in assets:
     h.update(open(f, "rb").read())
 ver = h.hexdigest()[:8]
 
-pages = sorted(glob.glob("*.html"))
+def _find_pages():
+    """Všetky .html v projekte vrátane podadresárov (napr. jazykové mutácie /en/).
+    Vynecháva skryté adresáre a priečinky nástrojov."""
+    SKIP = {"node_modules", "_verify_shots", "screenshots", "__pycache__"}
+    out = []
+    for dirpath, dirnames, filenames in os.walk("."):
+        dirnames[:] = [d for d in dirnames if not d.startswith(".") and d not in SKIP]
+        for fn in filenames:
+            if fn.endswith(".html"):
+                out.append(os.path.relpath(os.path.join(dirpath, fn), "."))
+    return sorted(out)
+
+pages = _find_pages()
 if not pages:
     sys.exit("Nenašiel som .html súbory.")
 

@@ -17,6 +17,22 @@ const { chromium } = require('playwright-core');
 
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
+function findPages(root) {
+  // Všetky .html vrátane podadresárov (napr. jazykové mutácie /en/).
+  const SKIP = new Set(['node_modules', '_verify_shots', 'screenshots']);
+  const out = [];
+  (function walk(dir, rel) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || SKIP.has(e.name)) continue;
+      const abs = path.join(dir, e.name);
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) walk(abs, r);
+      else if (e.name.endsWith('.html')) out.push(r);
+    }
+  })(root, '');
+  return out.sort();
+}
+
 const ROOT = path.resolve(opt('--root', '.'));
 const SHOTS = path.resolve(opt('--shots', path.join(ROOT, '_verify_shots')));
 const IGNORE = opt('--ignore', null) ? new RegExp(opt('--ignore', null)) : null;
@@ -42,7 +58,7 @@ function serve(port) {
 
 (async () => {
   fs.mkdirSync(SHOTS, { recursive: true });
-  const pages = fs.readdirSync(ROOT).filter(f => f.endsWith('.html'));
+  const pages = findPages(ROOT);
   const server = await serve(8399);
   const b = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
   const problems = [];

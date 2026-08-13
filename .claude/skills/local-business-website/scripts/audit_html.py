@@ -70,13 +70,30 @@ PLACEHOLDER = re.compile(
     # zástupné telefónne číslo typu „+421 9XX XXX XXX"
     r"X{2,}\s+X{3,})", re.I)
 
-pages = sorted(glob.glob("*.html"))
+def _find_pages():
+    """Všetky .html v projekte vrátane podadresárov (napr. jazykové mutácie /en/).
+    Vynecháva skryté adresáre a priečinky nástrojov."""
+    SKIP = {"node_modules", "_verify_shots", "screenshots", "__pycache__"}
+    out = []
+    for dirpath, dirnames, filenames in os.walk("."):
+        dirnames[:] = [d for d in dirnames if not d.startswith(".") and d not in SKIP]
+        for fn in filenames:
+            if fn.endswith(".html"):
+                out.append(os.path.relpath(os.path.join(dirpath, fn), "."))
+    return sorted(out)
+
+pages = _find_pages()
 if not pages:
     sys.exit("Nenašiel som žiadne .html súbory v " + os.getcwd())
 
 for p in pages:
     s = open(p, encoding="utf-8").read()
     is404 = p == "404.html"
+    # Relatívne odkazy sa riešia voči adresáru stránky, nie voči koreňu projektu –
+    # inak by každá stránka v podadresári (napr. /en/) hlásila samé neexistujúce súbory.
+    pdir = os.path.dirname(p)
+    def resolve(ref, _d=pdir):
+        return os.path.normpath(os.path.join(_d, ref)) if not ref.startswith("/") else ref.lstrip("/")
 
     for i, c in Counter(re.findall(r'\sid="([^"]+)"', s)).items():
         if c > 1:
@@ -90,17 +107,17 @@ for p in pages:
     # lokálne súbory; `data-mh-href="cesta.v.configu"` nie je súborový odkaz
     for m in re.finditer(r'(?<!-mh-)(?:src|href)="(?!https?:|mailto:|tel:|#|data:)([^"]+)"', s):
         ref = m.group(1).split("?")[0].split("#")[0]
-        if ref and not os.path.exists(ref):
+        if ref and not os.path.exists(resolve(ref)):
             add("ERROR", p, f"odkaz na neexistujúci súbor: {ref}")
 
-    for m in re.finditer(r'href="([a-z0-9\-]+\.html)(#[^"]*)?"', s):
-        tgt = m.group(1)
+    for m in re.finditer(r'href="((?:\.\./)*[a-z0-9\-/]+\.html)(#[^"]*)?"', s):
+        tgt = resolve(m.group(1))
         if not os.path.exists(tgt):
-            add("ERROR", p, f"odkaz na neexistujúcu stránku {tgt}")
+            add("ERROR", p, f"odkaz na neexistujúcu stránku {m.group(1)}")
         elif m.group(2):
             anchor = m.group(2)[1:]
             if f'id="{anchor}"' not in open(tgt, encoding="utf-8").read():
-                add("ERROR", p, f"kotva {tgt}{m.group(2)} neexistuje")
+                add("ERROR", p, f"kotva {m.group(1)}{m.group(2)} neexistuje")
 
     for m in re.finditer(r'href="#([^"]+)"', s):
         if m.group(1) and f'id="{m.group(1)}"' not in s:

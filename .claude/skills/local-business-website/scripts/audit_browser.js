@@ -37,6 +37,22 @@ if (args.includes('--help') || args.includes('-h')) {
   process.exit(0);
 }
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
+function findPages(root) {
+  // Všetky .html vrátane podadresárov (napr. jazykové mutácie /en/).
+  const SKIP = new Set(['node_modules', '_verify_shots', 'screenshots']);
+  const out = [];
+  (function walk(dir, rel) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || SKIP.has(e.name)) continue;
+      const abs = path.join(dir, e.name);
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) walk(abs, r);
+      else if (e.name.endsWith('.html')) out.push(r);
+    }
+  })(root, '');
+  return out.sort();
+}
+
 const ROOT = path.resolve(opt('--root', '.'));
 // Pozor aj na „x-kové" výplne v e-mailoch a doménach (info@xxxx.sk) – tie
 // vyzerajú ako reálny údaj a prejdú aj cez kontrolu odkazov.
@@ -47,7 +63,7 @@ const CHROME = require('child_process').execSync(
 const VIEWPORTS = [{ n: 'mobil', width: 390, height: 844 }, { n: 'desktop', width: 1280, height: 900 }];
 
 (async () => {
-  const pages = fs.readdirSync(ROOT).filter(f => f.endsWith('.html')).sort();
+  const pages = findPages(ROOT);
   if (!pages.length) { console.error('Nenašiel som .html súbory v ' + ROOT); process.exit(2); }
 
   const browser = await chromium.launch({ executablePath: CHROME });

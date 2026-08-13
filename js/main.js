@@ -3,7 +3,6 @@
    - Prepis firemných údajov z config.js do stránky (data-mh atribúty)
    - Mobilná navigácia
    - Tieň hlavičky pri skrolovaní
-   - Cookie lišta + načítanie Google Analytics/GTM po súhlase
    - Odhaľovanie prvkov pri skrolovaní (reveal)
    - Vyplnenie roku v pätičke, mapa, sociálne siete, otváracie hodiny
    ========================================================================= */
@@ -156,51 +155,6 @@
   }
 
   /* ---------- 10) Cookies + analytika ----------------------------------- */
-  var CONSENT_KEY = "mh_cookie_consent";
-
-  function loadAnalytics() {
-    var A = CFG.analytics || {};
-    if (A.gtmId) {
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0], j = d.createElement(s);
-        j.async = true; j.src = "https://www.googletagmanager.com/gtm.js?id=" + i;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", A.gtmId);
-    }
-    if (A.ga4Id) {
-      var g = document.createElement("script");
-      g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=" + A.ga4Id;
-      document.head.appendChild(g);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { window.dataLayer.push(arguments); };
-      window.gtag("js", new Date());
-      window.gtag("config", A.ga4Id, { anonymize_ip: true });
-    }
-  }
-
-  function initCookies() {
-    var bar = document.getElementById("cookie-bar");
-    if (!bar) return;
-    var stored = null;
-    try { stored = localStorage.getItem(CONSENT_KEY); } catch (e) {}
-
-    if (stored === "accepted") { loadAnalytics(); return; }
-    if (stored === "declined") { return; }
-
-    // Zobraziť lištu (mierne oneskorene pre plynulosť)
-    setTimeout(function () { bar.classList.add("is-visible"); }, 600);
-
-    function decide(value) {
-      try { localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
-      bar.classList.remove("is-visible");
-      if (value === "accepted") loadAnalytics();
-    }
-    var acc = bar.querySelector("[data-cookie-accept]");
-    var dec = bar.querySelector("[data-cookie-decline]");
-    if (acc) acc.addEventListener("click", function () { decide("accepted"); });
-    if (dec) dec.addEventListener("click", function () { decide("declined"); });
-  }
 
   /* ---------- Inicializácia --------------------------------------------- */
   function init() {
@@ -213,7 +167,6 @@
     initNav();
     initHeaderScroll();
     initReveal();
-    initCookies();
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

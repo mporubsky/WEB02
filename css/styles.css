@@ -171,7 +171,9 @@ p:last-child { margin-bottom: 0; }
 .section-head.center { margin-inline: auto; text-align: center; }
 .section-head h2 { margin-top: .5rem; }
 .section-head .lead { margin-top: .75rem; color: var(--c-muted); font-size: var(--fs-500); }
-.section--dark .section-head .lead { color: #BFD8D1; }
+.section--dark .section-head .lead,
+.section--dark .lead,
+.edu .lead { color: #BFD8D1; }
 
 .lead { font-size: var(--fs-500); color: var(--c-muted); }
 .text-accent { color: var(--c-accent-600); }
@@ -272,6 +274,7 @@ picture { display: contents; }
 
 .nav-toggle { display: none; width: 44px; height: 44px; border-radius: 10px; align-items: center; justify-content: center; color: var(--c-dark); border: 1px solid var(--c-border); }
 .nav-toggle svg { width: 24px; height: 24px; }
+.nav-toggle .icon-open { display: block; }
 .nav-toggle .icon-close { display: none; }
 
 @media (max-width: 940px) {
@@ -782,6 +785,21 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 .contact-item b { display: block; color: var(--c-dark); }
 .contact-item small { display: block; color: var(--c-muted); font-size: var(--fs-200); margin-top: .1rem; }
 
+
+.card p > a:only-child,
+.hero__card p > a:only-child,
+.contact-item small a { display: inline-flex; align-items: center; min-height: 24px; }
+
+/* Prepínač jazyka v navigácii – odlíšený od bežných položiek */
+.nav-lang { font-weight: 700; color: var(--c-accent-600); }
+.nav-lang::after { display: none; }
+
+/* Citát rodiča z pôvodného webu */
+.quote {
+  margin: 0; padding: 1.25rem 1.5rem; border-left: 4px solid var(--c-accent);
+  background: var(--c-accent-100); border-radius: 0 var(--radius) var(--radius) 0;
+}
+.quote p { font-size: var(--fs-500); font-style: italic; color: var(--c-dark); margin: 0; }
 
 /* Atribút [hidden] musí zvíťaziť aj nad display z komponentov – inak by
    napr. .btn[hidden] (tlačidlo „Zobraziť viac") ostalo viditeľné.

@@ -2,8 +2,8 @@
    BABYLAND — CENTRÁLNA KONFIGURÁCIA  (jediný súbor pre bežné zmeny)
    -------------------------------------------------------------------------
    Toto je jediný súbor, ktorý treba upraviť pri bežných zmenách: telefón,
-   e-mail, otváracie hodiny, doručovanie formulárov, mapa, analytika,
-   sociálne siete. Hodnoty sa automaticky prepíšu do celého webu cez atribúty
+   e-mail, adresa, otváracie hodiny a odkaz na mapu.
+   Hodnoty sa automaticky prepíšu do celého webu cez atribúty
    data-mh v HTML (spracúva main.js). Miesta na doplnenie sú označené „⚠ DOPLNIŤ".
 
    POZOR: Ak zmeníte telefón, e-mail alebo adresu, prepíšte ich aj v bloku
@@ -53,46 +53,12 @@ window.MH_CONFIG = {
       { d: "Pondelok – Piatok", h: "7:00 – 17:00" },
       { d: "Predĺžená opatera", h: "6:00 – 19:00 (po dohode)" },
       { d: "Sobota – Nedeľa",   h: "Po dohode" }
-    ],
-
-    coverage: ["Bratislava", "Petržalka", "Staré Mesto"],
-    responseTime: ""                             // ⚠ DOPLNIŤ, ak chcete sľubovať lehotu
+    ]
   },
 
-  /* ---- Doručovanie formulárov ------------------------------------------
-     Bez nastavenia formulár otvorí e-mailového klienta (mailto – funguje vždy).
-     Pre odosielanie priamo z webu použite BEZPLATNÝ Web3Forms:
-       1. https://web3forms.com  2. zadajte e-mail  3. vložte Access Key nižšie. */
-  form: {
-    web3formsKey: "",                 // ⚠ DOPLNIŤ, napr. "a1b2c3d4-...."
-    customEndpoint: ""
-  },
-
-  /* ---- Google mapa (embed bez API kľúča) --------------------------------
-     Vyhľadáva podľa adresy prevádzky. Ak chcete presnejší bod, nahraďte
-     adresu súradnicami: ...?q=48.1234,17.1050&z=16&output=embed */
+  /* ---- Odkaz na mapu ----------------------------------------------------
+     Kam vedie „Zobraziť na mape" na kontaktnej stránke. */
   maps: {
-    embedSrc:   "https://maps.google.com/maps?q=Nobelovo%20n%C3%A1m.%206%2C%20Bratislava&z=16&output=embed",
     directLink: "https://www.google.com/maps/search/?api=1&query=Nobelovo+n%C3%A1m.+6%2C+Bratislava"
-  },
-
-  /* ---- Analytika (spúšťa sa AŽ po súhlase s cookies) --------------------- */
-  analytics: {
-    ga4Id: "",                        // ⚠ DOPLNIŤ, ak chcete merať návštevnosť: "G-XXXXXXXXXX"
-    gtmId: ""
-  },
-
-  /* ---- Sociálne siete / profil (prázdne = nezobrazí sa) ------------------ */
-  social: {
-    facebook:      "",                // ⚠ DOPLNIŤ odkaz na FB stránku
-    instagram:     "",
-    googleReviews: ""                 // odkaz na Google profil (…/maps?cid=…)
-  },
-
-  /* ---- Súhrnné hodnotenie (len REÁLNE čísla — nikdy nevymýšľať!) ---------
-     Kým je rating prázdny, hodnotenie sa na webe vôbec nezobrazí. */
-  reviews: {
-    rating: "",                       // napr. "4,9" — doplniť reálne z Google
-    count:  null
   }
 };
