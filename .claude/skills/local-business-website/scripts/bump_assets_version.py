@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-bump_assets_version.py — zosúladí `?v=` pri odkazoch na CSS/JS s ich obsahom.
+bump_assets_version.py — zosúladí `?v=` pri odkazoch na CSS/JS a značkové
+obrázky (SVG/PNG v assets/) s ich obsahom.
 
 Prečo to existuje: prehliadače a hostingy držia JS/CSS v cache celé dni. Keď
 upravíš `config.js` alebo `styles.css` a zabudneš zvýšiť verziu, používateľ
@@ -8,7 +9,12 @@ dostane NOVÉ HTML so STARÝM štýlom či starými údajmi — stránka sa rozs
 ukazuje staré telefónne číslo. „Nezabudni zvýšiť verziu" ako pravidlo nestačí;
 tento skript to spraví za teba.
 
-Verzia je krátky hash obsahu všetkých lokálnych CSS/JS súborov, takže sa zmení
+Značkové obrázky sem patria rovnako ako CSS: logo a favicona sa pri prefarbení
+menia, ale názov súboru ostáva — a hostingy im dávajú `Cache-Control` na rok.
+Bez `?v=` by vracajúci sa návštevník videl staré logo prakticky navždy.
+Fotografie (.jpg) sa neverzujú: nové fotky dostávajú nové názvy.
+
+Verzia je krátky hash obsahu všetkých týchto súborov, takže sa zmení
 práve vtedy, keď sa niečo naozaj zmenilo — a pri opakovanom behu bez zmien
 neurobí nič.
 
@@ -16,7 +22,7 @@ Použitie:
   python bump_assets_version.py [--root .] [--check]
   --check : nič nezapíše, len oznámi, či je verzia zastaraná (návratový kód 1)
 
-Zaraď to do postupu pred každým pushom, ktorý sa dotkol css/ alebo js/.
+Zaraď to do postupu pred každým pushom, ktorý sa dotkol css/, js/ alebo assets/.
 """
 import re, os, sys, glob, hashlib, argparse
 
@@ -26,7 +32,11 @@ ap.add_argument("--check", action="store_true", help="len skontroluj, nezapisuj"
 a = ap.parse_args()
 os.chdir(a.root)
 
-assets = sorted(glob.glob("css/*.css") + glob.glob("js/*.js"))
+assets = sorted(
+    glob.glob("css/*.css") + glob.glob("js/*.js")
+    + glob.glob("assets/**/*.svg", recursive=True)
+    + glob.glob("assets/**/*.png", recursive=True)
+)
 if not assets:
     sys.exit("Nenašiel som css/*.css ani js/*.js — si v koreni projektu?")
 
@@ -52,10 +62,14 @@ pages = _find_pages()
 if not pages:
     sys.exit("Nenašiel som .html súbory.")
 
+# odkazy, ktoré verzujeme: css, js a značkové obrázky (nie fotky .jpg)
+REF = r'((?:href|src)=")((?:\.\./)*(?:css|js|assets)/[^"?]+\.(?:css|js|svg|png))(\?v=[^"]*)?(")'
+
 # nájdi verzie, ktoré sú v HTML teraz
 sucasne = set()
 for p in pages:
-    sucasne |= set(re.findall(r'(?:css|js)/[^"?]+\?v=([^"]*)', open(p, encoding="utf-8").read()))
+    for m in re.finditer(REF, open(p, encoding="utf-8").read()):
+        sucasne.add(m.group(3)[3:] if m.group(3) else "")
 
 if sucasne == {ver}:
     print(f"✅ Verzia je aktuálna (?v={ver}) — netreba nič meniť.")
@@ -70,10 +84,8 @@ zmenene = 0
 for p in pages:
     s = open(p, encoding="utf-8").read()
     o = s
-    # už verzované odkazy prepíš
-    s = re.sub(r'((?:css|js)/[^"?]+)\?v=[^"]*', rf'\1?v={ver}', s)
-    # neverzované doplň
-    s = re.sub(r'((?:href|src)=")((?:css|js)/[^"?]+)(")', rf'\1\2?v={ver}\3', s)
+    # jedným prechodom: verzované prepíš, neverzované doplň
+    s = re.sub(REF, rf'\1\2?v={ver}\4', s)
     if s != o:
         open(p, "w", encoding="utf-8").write(s)
         zmenene += 1

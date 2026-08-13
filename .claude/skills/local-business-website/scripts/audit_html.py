@@ -210,7 +210,11 @@ if cfg:
 # Verzia musí zodpovedať OBSAHU css/js. Ak nie, návštevníkom sa k novému HTML
 # doručí starý štýl alebo staré údaje — a stránka sa im rozsype.
 import hashlib
-_assets = sorted(glob.glob("css/*.css") + glob.glob("js/*.js"))
+_assets = sorted(
+    glob.glob("css/*.css") + glob.glob("js/*.js")
+    + glob.glob("assets/**/*.svg", recursive=True)
+    + glob.glob("assets/**/*.png", recursive=True)
+)
 if _assets:
     _h = hashlib.sha256()
     for f in _assets:

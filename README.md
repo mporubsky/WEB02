@@ -85,10 +85,14 @@ business: {
 
 Zmeňte **obe** hodnoty — prvá sa zobrazuje, druhá sa vytáča.
 
-> **Dôležité:** po každej úprave v `js/` alebo `css/` spustite
+> **Dôležité:** po každej úprave v `js/`, `css/` alebo `assets/` spustite
 > `python3 .claude/skills/local-business-website/scripts/bump_assets_version.py`.
 > Zmení sa tým `?v=…` v odkazoch na súbory a prehliadače návštevníkov si stiahnu
-> novú verziu. Bez toho môžu rodičia týždeň vidieť starý telefón.
+> novú verziu. Bez toho môžu rodičia týždeň vidieť starý telefón — a pri logu
+> a favicone dokonca **celý rok**, lebo `netlify.toml` im nastavuje dlhú cache.
+>
+> Fotografie (`.jpg`) sa zámerne neverzujú. Keď meníte fotku, dajte jej **nový
+> názov súboru** — inak ju vracajúci sa návštevník neuvidí.
 
 > **Pozor na dve výnimky.** Otváracie hodiny na anglických stránkach a blok
 > `JSON-LD` na konci `index.html` sa z `config.js` **neplnia** — sú napísané
