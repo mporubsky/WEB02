@@ -209,13 +209,17 @@ oranžovej. Nie je to kópia, ale motív je pôvodný.
 | `assets/logo-babyland.svg` | nápis BABYLAND v hlavičke a v pätičke |
 | `assets/img/babyland-kresba.svg` | celá kresba (slniečko + nápis + dve deti) na úvodnej stránke, slovenskej aj anglickej |
 
-Nápis je **vytrasovaný priamo z pôvodného obrázka**, takže tvar písmen je
-zachovaný presne — vrátane zvislého prechodu z oranžovej cez žltú späť do
-oranžovej. Slniečko a postavičky sú prekreslené načisto: pôvodné ceruzkové
-čiary boli v 87 px predlohe príliš roztrasené na to, aby sa dali zväčšiť.
-Kompozícia, proporcie aj farby (žlté slnko, oranžové šaty `#FF9900`, zelené
-tričko `#99CC00`) ostali rovnaké; obrysy sú v teplej hnedej namiesto čiernej,
-aby ladili so zvyškom webu.
+Nápis je **prekreslený z čistej geometrie** — priamky a elipsy podľa mier
+odčítaných z originálu (verzálková výška 84, hrúbka ťahu 10, presné šírky
+a rozstupy jednotlivých písmen). Automatické trasovanie sa neosvedčilo:
+predloha má len 87 px na výšku, takže hrany písmen vychádzali roztrasené
+a pri zväčšení to bolo vidieť. Zvislý prechod z oranžovej cez žltú späť do
+oranžovej je zachovaný z originálu.
+
+Slniečko a postavičky sú prekreslené z rovnakého dôvodu. Kompozícia,
+proporcie aj farby (žlté slnko, oranžové šaty `#FF9900`, zelené tričko
+`#99CC00`) ostali rovnaké; obrysy sú v teplej hnedej namiesto čiernej, aby
+ladili so zvyškom webu.
 
 Keďže je to vektor, kresba je ostrá v akejkoľvek veľkosti aj pri tlači.
 Veľkosť na stránke sa mení v `css/styles.css` → `.artwork img { max-width }`.
