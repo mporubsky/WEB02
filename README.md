@@ -188,6 +188,16 @@ Farby sú prevzaté z **pôvodného loga BABYLAND** — oranžová `#FF9933` je
 vzorkovaná priamo z pôvodného nápisu, limetka `#99CC00` z trička postavičky
 a žltá `#FFD11A` zo slniečka na starej úvodnej stránke.
 
+Značka (`assets/logo-mark.svg`, `assets/favicon.svg`) je **moderná
+interpretácia slniečka**, ktoré bolo na pôvodnej úvodnej stránke — hrubé
+zaoblené lúče namiesto vlasových čiar a kotúč s prechodom zo žltej do
+oranžovej. Nie je to kópia, ale motív je pôvodný.
+
+Ikony v `assets/` (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`,
+`icon-512.png`) aj `og-image.png` sa **generujú z SVG** — po zmene značky
+alebo farieb ich prekreslite:
+`node .claude/skills/local-business-website/scripts/render_raster.js`
+
 Prefarbenie značky = zmena premenných v `:root` v `css/styles.css`.
 Pozor na kontrast: `--c-accent` (oranžová) je **len dekoratívna** — biely text
 na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte

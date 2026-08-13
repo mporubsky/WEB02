@@ -20,10 +20,16 @@
   <circle cx="1097.0" cy="319.0" r="17.9" fill="#99CC00" opacity="0.77"/>
   <circle cx="925.3" cy="591.4" r="15.6" fill="#FFB226" opacity="0.63"/>
   <rect x="857.7" y="33.3" width="21.5" height="21.5" rx="3.8" fill="#FF9933" opacity="0.78" transform="rotate(-2 868.5 44.1)"/>
-  <g opacity="0.16" fill="#ffffff">
-    <circle cx="913.6" cy="313.0" r="46.0"/>
-    <circle cx="1054.4" cy="313.0" r="46.0"/>
-    <circle cx="984.0" cy="394.2" r="92.0"/>
+  <g opacity="0.14" fill="#ffffff">
+    <circle cx="984.0" cy="365.4" r="117.2"/>
+    <line x1="1117.5" y1="420.7" x2="1155.4" y2="436.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="1039.3" y1="498.9" x2="1055.0" y2="536.8" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="928.7" y1="498.9" x2="913.0" y2="536.8" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="850.5" y1="420.7" x2="812.6" y2="436.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="850.5" y1="310.1" x2="812.6" y2="294.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="928.7" y1="231.9" x2="913.0" y2="194.0" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="1039.3" y1="231.9" x2="1055.0" y2="194.0" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+    <line x1="1117.5" y1="310.1" x2="1155.4" y2="294.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
   </g>
   <text x="90" y="277" font-family="Arial,Helvetica,sans-serif" font-size="85" font-weight="800" fill="#ffffff" letter-spacing="1">BABYLAND</text>
   <text x="90" y="353" font-family="Arial,Helvetica,sans-serif" font-size="37" font-weight="600" fill="#DCC9B6">1. súkromné opatrovateľské centrum</text>

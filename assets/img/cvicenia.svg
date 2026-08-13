@@ -19,9 +19,15 @@
   <circle cx="327.7" cy="283.6" r="18.7" fill="#FF9933" opacity="0.44"/>
   <circle cx="710.8" cy="167.6" r="8.0" fill="#FF9933" opacity="0.54"/>
   <circle cx="574.5" cy="561.2" r="11.4" fill="#FFD11A" opacity="0.77"/>
-  <g opacity="0.16" fill="#ffffff">
-    <circle cx="589.0" cy="298.1" r="43.8"/>
-    <circle cx="723.0" cy="298.1" r="43.8"/>
-    <circle cx="656.0" cy="375.5" r="87.7"/>
+  <g opacity="0.14" fill="#ffffff">
+    <circle cx="656.0" cy="348.0" r="111.6"/>
+    <line x1="783.2" y1="400.7" x2="819.2" y2="415.6" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="708.7" y1="475.2" x2="723.6" y2="511.2" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="603.3" y1="475.2" x2="588.4" y2="511.2" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="528.8" y1="400.7" x2="492.8" y2="415.6" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="528.8" y1="295.3" x2="492.8" y2="280.4" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="603.3" y1="220.8" x2="588.4" y2="184.8" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="708.7" y1="220.8" x2="723.6" y2="184.8" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
+    <line x1="783.2" y1="295.3" x2="819.2" y2="280.4" stroke="#ffffff" stroke-width="40.9" stroke-linecap="round"/>
   </g>
 </svg>

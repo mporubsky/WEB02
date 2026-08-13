@@ -1,13 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BABYLAND">
-  <g fill="#FF9933">
-    <circle cx="19" cy="20" r="8.5"/>
-    <circle cx="45" cy="20" r="8.5"/>
-    <circle cx="32" cy="35" r="17"/>
+  <!-- Moderná interpretácia slniečka z pôvodnej úvodnej stránky (2004):
+       hrubé zaoblené lúče namiesto vlasových čiar, kotúč s prechodom
+       zo žltej #FFD11A do oranžovej #FF9933 z pôvodného loga. -->
+  <defs><linearGradient id="s" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFD11A"/><stop offset="1" stop-color="#FF9933"/></linearGradient></defs>
+  <g>
+    <line x1="53.2" y1="40.8" x2="59.7" y2="43.5" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="40.8" y1="53.2" x2="43.5" y2="59.7" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="23.2" y1="53.2" x2="20.5" y2="59.7" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="10.8" y1="40.8" x2="4.3" y2="43.5" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="10.8" y1="23.2" x2="4.3" y2="20.5" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="23.2" y1="10.8" x2="20.5" y2="4.3" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="40.8" y1="10.8" x2="43.5" y2="4.3" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
+    <line x1="53.2" y1="23.2" x2="59.7" y2="20.5" stroke="#FF9933" stroke-width="7" stroke-linecap="round"/>
   </g>
-  <ellipse cx="32" cy="41" rx="8.5" ry="6.8" fill="#FFF2E0"/>
-  <g fill="#5A3312">
-    <circle cx="25.5" cy="31.5" r="2.5"/>
-    <circle cx="38.5" cy="31.5" r="2.5"/>
-    <circle cx="32" cy="38" r="2.8"/>
+  <circle cx="32" cy="32" r="19" fill="url(#s)"/>
+  <g>
+    <circle cx="24.8" cy="28.2" r="3.3" fill="#5A3312"/>
+    <circle cx="39.2" cy="28.2" r="3.3" fill="#5A3312"/>
+    <path d="M23.3 36.0 q 8.7 7.8 17.4 0" fill="none" stroke="#5A3312" stroke-width="4.2" stroke-linecap="round"/>
   </g>
 </svg>
