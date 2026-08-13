@@ -7,6 +7,10 @@ funguje na mobile, dá sa nájsť v Google a dá sa upravovať. Opravené sú ú
 ktoré medzitým prestali platiť — adresa prevádzky, otváracie hodiny a označenie
 prevádzky (viď nižšie).
 
+> **Chcete web upraviť?** Návod krok za krokom je v
+> **[docs/PRIRUCKA.md](docs/PRIRUCKA.md)**.
+> Technický popis je v **[docs/TECHNICKA-DOKUMENTACIA.md](docs/TECHNICKA-DOKUMENTACIA.md)**.
+
 Web je **statický** — žiadny WordPress, žiadna databáza, žiadne zostavovanie
 (build). Sú to obyčajné HTML súbory, ktoré sa dajú nahrať kamkoľvek a otvoriť
 aj priamo z disku. Vďaka tomu je rýchly, lacný na prevádzku a nič sa na ňom
@@ -212,9 +216,13 @@ assets/                 značka a ikony (favicon, logo-mark, PNG ikony)
 assets/img/             fotografie, zástupný hero obrázok a náhľad pre siete
 ```
 
-Žiadne knižnice, žiadny build. `js/main.js` má okolo 120 riadkov a robí len
-štyri veci: doplní údaje z `config.js`, vykreslí hodiny, doplní rok do pätičky
-a obsluhuje mobilné menu. Web neodosiela ani nesleduje nič.
+Žiadne knižnice, žiadny build. `js/main.js` má ~276 riadkov (z toho väčšinu
+tvoria komentáre s popisom, typmi a príkladmi) a robí päť vecí: doplní údaje
+z `config.js`, vykreslí hodiny, doplní rok do pätičky, obsluhuje mobilné menu
+a pridáva tieň hlavičke pri skrolovaní. Web neodosiela ani nesleduje nič.
+
+Podrobný popis architektúry, hraníc rozloženia a slabých miest je
+v **[docs/TECHNICKA-DOKUMENTACIA.md](docs/TECHNICKA-DOKUMENTACIA.md)**.
 
 Farby sú prevzaté z **pôvodného loga BABYLAND** — oranžová `#FF9933` je
 vzorkovaná priamo z pôvodného nápisu, limetka `#99CC00` z trička postavičky
@@ -253,8 +261,8 @@ alebo farieb ich prekreslite:
 `node .claude/skills/local-business-website/scripts/render_raster.js`
 
 **Farebný rytmus stránok.** Sekcie striedajú svetlé podklady — pridajte triedu
-`section--alt`, `section--cream`, `section--lime`, `section--sun` alebo
-`section--sky` k `<section class="section …">` a pozadie sa zmení.
+`section--alt`, `section--sun` alebo `section--sky` k `<section class="section …">`
+a pozadie sa zmení.
 
 Farby **kariet** (`.card`), **odrážok** (`.tick-list`) aj **riadkov s formami
 opatery** (`.feature-list`) sa striedajú samy podľa poradia — oranžová,
@@ -268,20 +276,24 @@ na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte
 (`css`, `site.webmanifest`, `<meta name="theme-color">`, SVG v `assets/`)
 a spustite `audit_browser.js`.
 
-Kontrolné skripty (v `.claude/skills/local-business-website/scripts/`):
+Kontrolné skripty — vlastný je v `scripts/`, ostatné
+v `.claude/skills/local-business-website/scripts/`:
 
 ```bash
-python3 scripts/bump_assets_version.py     # ?v= podľa obsahu css/js — po každej zmene
-python3 scripts/audit_html.py    --root .  # odkazy, kotvy, SEO, zástupné texty
-node    scripts/audit_browser.js --root .  # pretečenie, kontrast, dotykové plochy
-node    scripts/verify_site.js   --root .  # chyby JS, assety, mobilné menu + snímky
+python3 scripts/kontrola.py                # typografia, nadpisy, mŕtve štýly, alt
+python3 …/bump_assets_version.py           # ?v= podľa obsahu css/js — po každej zmene
+python3 …/audit_html.py         --root .   # odkazy, kotvy, SEO, zástupné texty
+node    …/audit_browser.js      --root .   # pretečenie, kontrast, dotykové plochy
+node    …/verify_site.js        --root .   # chyby JS, assety, mobilné menu + snímky
 ```
 
-Všetky štyri prehľadávajú aj podpriečinky, takže pokrývajú aj `en/`.
+Všetky prehľadávajú aj podpriečinky, takže pokrývajú aj `en/`.
 
-Web je overený v prehliadači na šírkach **320, 390, 768 a 1280 px**: bez
-vodorovného pretečenia, bez orezaného textu, všetky dotykové plochy aspoň
-24 px a kontrast textu všade nad normou WCAG AA.
+Web je overený v prehliadači na šírkach **320, 360, 375, 390, 412, 430, 480,
+560, 768, 900, 1024, 1152, 1280 a 1440 px**, pri 200 % priblížení, na mobile
+na šírku a pri zväčšených rozostupoch textu podľa WCAG 1.4.12: bez vodorovného
+pretečenia, bez orezaného textu, všetky dotykové plochy aspoň 24 px, viditeľné
+zameranie klávesnicou a kontrast textu všade nad normou WCAG AA.
 
 `audit_html.py` hlási „chýba cookie lišta“ — je to očakávané, web žiadne
 cookies nenastavuje. Skripty v prehliadači potrebujú `playwright-core`
