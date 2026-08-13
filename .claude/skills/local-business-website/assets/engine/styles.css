@@ -97,7 +97,11 @@ body {
   background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* Dlhé slovo sa zlomí namiesto toho, aby vytlačilo stránku do šírky.
+     ZÁMERNE tu nie je overflow-x: hidden — to pretečenie iba schová
+     a audit potom prejde ako čistý aj vtedy, keď je tlačidlo menu
+     na 320 px celé mimo obrazovky. Stalo sa. */
+  overflow-wrap: break-word;
 }
 img, svg, video { max-width: 100%; display: block; height: auto; }
 img { border-style: none; }
@@ -620,7 +624,9 @@ picture { display: contents; }
 .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 2rem; }
 @media (max-width: 880px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; } }
-.site-footer h4 { color: #fff; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 1rem; }
+/* Nadpisy stĺpcov v pätičke sú h2, nie h4: po obsahovom h2 by h4
+   preskočil stupeň a čítačka obrazovky stratí štruktúru. */
+.site-footer h2 { color: #fff; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 1rem; }
 .site-footer a { color: #b7c4d1; }
 .site-footer a:hover { color: var(--c-accent-300); }
 .footer-links { list-style: none; padding: 0; display: grid; gap: .15rem; font-size: var(--fs-300); }

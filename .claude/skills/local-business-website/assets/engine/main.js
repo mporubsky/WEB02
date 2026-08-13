@@ -106,28 +106,64 @@
     });
   }
 
-  /* ---------- 7) Mobilná navigácia -------------------------------------- */
+  /* ---------- 7) Mobilná navigácia --------------------------------------
+     Dve veci, ktoré tu MUSIA zostať a v predchádzajúcej verzii chýbali:
+
+     1. Hranica desktopu sa NEZAPISUJE ako číslo. Zisťuje sa z toho, či je
+        hamburger ešte zobrazený. Keď tu bolo `innerWidth > 940` a v CSS sa
+        media query posunula, menu sa v pásme medzi starou a novou hodnotou
+        pri zmene veľkosti okna samo zatváralo.
+     2. Kým je menu otvorené, zvyšok stránky je `inert`. Bez toho tabulátor
+        prejde rovno za prekryv na odkazy, ktoré nevidno, a k položkám menu
+        sa používateľ klávesnice vôbec nedostane. Menu býva v HTML pred
+        hamburgerom, takže zameranie treba presunúť dovnútra ručne.
+     -------------------------------------------------------------------- */
   function initNav() {
     var toggle = document.querySelector(".nav-toggle");
     var nav = document.getElementById("main-nav");
     if (!toggle || !nav) return;
-    function close() {
-      nav.classList.remove("is-open");
-      document.body.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.querySelector(".icon-open").style.display = "";
-      toggle.querySelector(".icon-close").style.display = "none";
-    }
-    toggle.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
+
+    var header = toggle.closest(".site-header");
+    var iconOpen = toggle.querySelector(".icon-open");
+    var iconClose = toggle.querySelector(".icon-close");
+    var background = Array.prototype.filter.call(document.body.children, function (el) {
+      return el !== header && el.tagName !== "SCRIPT";
+    });
+
+    function setOpen(open) {
+      nav.classList.toggle("is-open", open);
       document.body.classList.toggle("nav-open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.querySelector(".icon-open").style.display = open ? "none" : "";
-      toggle.querySelector(".icon-close").style.display = open ? "block" : "none";
+      if (iconOpen) iconOpen.style.display = open ? "none" : "";
+      if (iconClose) iconClose.style.display = open ? "block" : "none";
+      if ("inert" in HTMLElement.prototype) {
+        background.forEach(function (el) { el.inert = open; });
+      }
+    }
+
+    function isCollapsed() {
+      return window.getComputedStyle(toggle).display !== "none";
+    }
+
+    toggle.addEventListener("click", function () {
+      var open = !nav.classList.contains("is-open");
+      setOpen(open);
+      if (open) {
+        var first = nav.querySelector("a");
+        if (first) first.focus();
+      } else {
+        toggle.focus();
+      }
     });
-    nav.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", close); });
-    window.addEventListener("resize", function () { if (window.innerWidth > 940) close(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    nav.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setOpen(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || !nav.classList.contains("is-open")) return;
+      setOpen(false);
+      toggle.focus();
+    });
+    window.addEventListener("resize", function () { if (!isCollapsed()) setOpen(false); });
   }
 
   /* ---------- 8) Tieň hlavičky pri skrolovaní --------------------------- */

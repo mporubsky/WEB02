@@ -82,8 +82,28 @@ const VIEWPORTS = [{ n: 'mobil', width: 390, height: 844 }, { n: 'desktop', widt
       await pg.waitForTimeout(250);
 
       const r = await pg.evaluate((phRe) => {
-        const out = { overflow: null, culprits: [], contrast: [], onImage: [], taps: [], unbound: [], broken: [], unlabeled: [] };
+        const out = { overflow: null, culprits: [], contrast: [], onImage: [], taps: [], unbound: [], broken: [], unlabeled: [], masked: null, headings: [] };
         const vw = document.documentElement.clientWidth;
+
+        // `overflow-x: hidden` na <body> alebo <html> robí kontrolu pretečenia
+        // nižšie nepoužiteľnou — schová presne to, čo sa tu meria. Web s ním
+        // prešiel ako čistý v čase, keď bol hamburger na 320 px mimo obrazovky.
+        ['html', 'body'].forEach(sel => {
+          const el = document.querySelector(sel);
+          if (el && getComputedStyle(el).overflowX === 'hidden') out.masked = sel;
+        });
+
+        // Nadpisy: práve jeden <h1> a žiadny preskočený stupeň. Vyberá sa
+        // podľa štruktúry dokumentu, nie podľa toho, ako veľký má byť text.
+        const levels = [...document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6, footer h1, footer h2, footer h3, footer h4, footer h5, footer h6')]
+          .map(h => ({ n: +h.tagName[1], t: (h.textContent || '').trim().slice(0, 30) }));
+        const h1s = levels.filter(l => l.n === 1).length;
+        if (h1s !== 1) out.headings.push(`${h1s}x <h1>, má byť práve jeden`);
+        let prev = 0;
+        levels.forEach(l => {
+          if (prev && l.n > prev + 1) out.headings.push(`preskočený nadpis h${prev} → h${l.n} pri „${l.t}"`);
+          prev = l.n;
+        });
 
         const inScroller = el => {
           for (let n = el.parentElement; n && n !== document.body; n = n.parentElement)
@@ -156,6 +176,8 @@ const VIEWPORTS = [{ n: 'mobil', width: 390, height: 844 }, { n: 'desktop', widt
 
       const tag = `[${vp.n}] ${file}`;
       errs.forEach(e => problems.push(`${tag}: chyba konzoly – ${e}`));
+      if (r.masked) problems.push(`${tag}: <${r.masked}> má overflow-x: hidden — schováva pretečenie a znefunkčňuje túto kontrolu; použi overflow-wrap: break-word a oprav príčinu`);
+      if (vp.n === 'desktop') r.headings.forEach(h => problems.push(`${file}: ${h}`));
       if (r.overflow) problems.push(`${tag}: horizontálne pretečenie ${r.overflow.scrollW}px > ${r.overflow.vw}px\n        ${r.culprits.join('\n        ')}`);
       r.contrast.forEach(c => problems.push(`${tag}: slabý kontrast ${c}`));
       r.taps.forEach(t => problems.push(`${tag}: malá dotyková plocha ${t}`));
@@ -179,5 +201,5 @@ const VIEWPORTS = [{ n: 'mobil', width: 390, height: 844 }, { n: 'desktop', widt
     problems.forEach(p => console.log('  • ' + p));
     process.exit(1);
   }
-  console.log('✅ Prehliadač: bez pretečenia, kontrast OK, dotykové plochy OK, údaje naplnené.');
+  console.log('✅ Prehliadač: bez pretečenia (a bez masky overflow-x), nadpisy OK, kontrast OK, dotykové plochy OK, údaje naplnené.');
 })();

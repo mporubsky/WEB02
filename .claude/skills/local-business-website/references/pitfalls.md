@@ -317,3 +317,135 @@ when JSON-LD `telephone`/`email` doesn't match `config.js` — treat that warnin
 a release blocker for launch even though it isn't a hard error. Same class as
 pitfall 21 (`site.webmanifest` colour): any value that lives in a second,
 non-config place must be kept in sync deliberately.
+
+---
+
+# Part 3 — found by rebuilding a 2004 site and then stress-testing the result
+
+Pitfalls 30–38 all come from one project: modernising an existing kindergarten
+site. Every one of them was live in a build that had already passed
+`audit_html.py`, `audit_browser.js` **and** `verify_site.js` with green ticks.
+
+## 30. `overflow-x: hidden` on `body` hides your own bugs
+**Symptom:** `audit_browser.js` reports "no horizontal overflow" while the
+hamburger button is, at 320 px, entirely off the right edge of the screen. The
+mobile menu literally cannot be opened, and nothing warns you.
+**Cause:** the engine shipped `body { overflow-x: hidden }`. Every overflow
+check derives from `documentElement.scrollWidth > innerWidth`, and that rule
+makes the symptom unmeasurable. It also breaks `position: sticky` in some
+engines and can clip focus outlines.
+**Fix:** the engine no longer has it. Use `body { overflow-wrap: break-word }`
+so long words wrap instead, and let real overflow show — then fix the cause.
+If you ever add `overflow-x: hidden` back, you have disabled your own audit.
+
+## 31. A round-number nav breakpoint that was never measured
+**Symptom:** the page scrolls sideways on 1024 px and 1152 px screens — two of
+the most common laptop widths — while phones and 1440 px desktops are fine.
+**Cause:** the hamburger appeared at ≤ 940 px because 940 is a nice number. The
+desktop header (brand + 7 nav items + phone) actually needed **1149 px**. So
+between 941 and 1148 px the header was wider than the viewport.
+**Fix:** *measure* it. Set the breakpoint to `1px` temporarily so the desktop
+header renders at every width, binary-search the narrowest width where
+`documentElement.scrollWidth <= innerWidth`, then set the media query one pixel
+below it. Do this in the **longest** language the site ships. Re-measure after
+any change to the nav item count, the brand, or the phone format — and leave a
+comment in the CSS saying the number was measured and what it depends on.
+Corollary: check the header still fits inside `--container` (content width),
+not merely inside the viewport, or it will sit wider than the rest of the page.
+
+## 32. The same breakpoint written in both CSS and JS
+**Symptom:** you move the nav breakpoint in CSS; afterwards, resizing the window
+anywhere in the old-to-new range silently closes the open mobile menu.
+**Cause:** `main.js` had `if (window.innerWidth > 940) close()`. Two sources of
+truth for one number.
+**Fix:** the engine now asks the DOM instead:
+`window.getComputedStyle(toggle).display !== "none"`. The hamburger's own
+visibility *is* the breakpoint. Never copy a media-query value into JS.
+
+## 33. Keyboard focus escapes behind the open mobile menu
+**Symptom:** open the menu on a phone, press Tab — focus jumps straight past the
+overlay onto links in the page behind it. The menu items are never reached, and
+the focus ring is invisible because it is under the overlay.
+**Cause:** nothing made the background unreachable, and the nav sits *before*
+the toggle in the DOM, so Tab from the toggle leaves the header entirely.
+**Fix:** the engine now sets `inert` on every `<body>` child except the header
+while the menu is open, moves focus to the first menu link on open, and returns
+it to the toggle on close (also on Escape). Guard with
+`if ("inert" in HTMLElement.prototype)`. Test it: open the menu, press Tab ten
+times, and assert every stop is inside the header or the nav.
+
+## 34. A media query placed above the rule it is meant to override
+**Symptom:** `@media (max-width: 380px) { .brand__word { height: 18px } }` has
+no effect. Devtools shows it struck through.
+**Cause:** it sat *above* the base `.brand__word { height: 20px }`. Same
+specificity ⇒ source order decides, and the base rule wins.
+**Fix:** put narrow-screen overrides **after** the rules they override. This is
+invisible in review and invisible in screenshots at the widths you happen to
+test — the only reliable detection is measuring the computed value at the width
+the media query targets.
+
+## 35. Heading levels skip, everywhere, by construction
+**Symptom:** `h1 → h3` in the hero card and `h2 → h4` in the footer, on every
+page.
+**Cause:** headings were chosen by how big they should look. The hero card used
+`h3` because `h3` is the card size; the footer used `h4` because the columns are
+small.
+**Fix:** pick the level from the document outline, then style it. The hero card
+heading is `h2` with `font-size: var(--fs-500)`; footer column headings are `h2`
+with the small footer size. Assert in CI: exactly one `h1` per page, no level
+skipped.
+
+## 36. Locale typography: a Slovak site set in English punctuation
+**Symptom:** nothing looks broken, but the text reads as translated. On a narrow
+phone, single-letter prepositions dangle at the ends of lines all over the page.
+**Cause:** the copy used `—` (em dash) and plain spaces. Slovak (STN 01 6910)
+has no em dash — the parenthetical dash is `–` — and single-letter prepositions
+(a, i, o, u, v, s, z, k) must be bound to the next word with `&nbsp;`.
+**Fix:** apply per-locale typography and never globally: the Slovak pages get
+`–` and 128 non-breaking spaces; the English pages keep `—` and get none. Two
+traps when automating it: apply the dash swap to `alt=`, `<title>` and
+`<meta description>` too (a screen reader reads `alt`), and *loop* the
+non-breaking-space substitution — one pass fixes only the first of two adjacent
+one-letter words ("a s láskou" ⇒ "a&nbsp;s láskou", not "a&nbsp;s&nbsp;láskou").
+Also mark foreign phrases with `lang`: an English phrase inside Slovak body copy,
+and the Slovak legal name inside English pages, or the screen reader mispronounces
+both.
+
+## 37. The old site is not a source of current facts
+**Symptom:** the rebuilt site shipped with the wrong street address, the wrong
+opening hours, and described the business as something it no longer is.
+**Cause:** everything was faithfully carried over from the site being modernised.
+That site was twenty years old. Business directories repeated the same stale
+address, so they "confirmed" it.
+**Fix:** when the job is "modernise this existing site", treat its content as
+**copy**, not as **facts**. Before launch, verify against something current —
+the Google Maps listing, a photo of the notice on the door, the owner. Check at
+minimum: trading name, street address, opening hours, phone, and what the
+business actually calls itself. Ask for it explicitly in intake.
+
+## 38. The trade-licence name is not what the business *is*
+**Symptom:** the site called itself "1. súkromné opatrovateľské centrum" in the
+brand lockup, page titles, `site.webmanifest`, and `ChildCare` structured data.
+The place is a kindergarten; that phrase is only part of the sole trader's
+registered name.
+**Cause:** the legal name from the registry was used as the business
+description because it was the longest, most official-looking string available.
+**Fix:** separate the two and use each in exactly one place. What the business
+*is* goes in the brand descriptor, headings, titles, meta descriptions, the
+manifest and `@type`. The registered name goes only in the billing/legal block
+and the copyright line. Add a repo check that fails if the registered name
+appears anywhere else. (Same family as pitfall 20: registered office vs. the
+address customers visit.)
+
+## 39. Tracing a low-resolution logo produces wavy letters
+**Symptom:** the vectorised wordmark looks fine at 20 px in the header and
+visibly wobbly the moment anyone zooms in — every edge has a slight ripple.
+**Cause:** the source was an 87 px-tall GIF. `potrace` faithfully reproduced the
+anti-aliasing staircase. Smoothing removes the ripple but deforms the letters
+(the counter of "A" turns into a blob).
+**Fix:** for a logo, measure and *reconstruct* rather than trace. Read the cap
+height, stroke weight and each letter's x-bounds off the bitmap, then build the
+glyphs from straight lines and ellipse arcs. Overlay the result on the source to
+confirm it stays within 1–2 px. On this project the path went from 23.6 kB of
+trace noise to 1.0 kB of clean geometry. Trace only artwork that is genuinely
+irregular (a hand drawing), never type.

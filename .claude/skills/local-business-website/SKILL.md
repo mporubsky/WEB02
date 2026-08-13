@@ -103,6 +103,28 @@ address, legal name + ID, form delivery) before building, not after.
 - Note the site's **language** — all UI text, comments, and the README go in
   the client's language, not English.
 
+**When the brief is "modernise our existing site", two rules override the
+defaults.**
+
+*The old site defines the scope.* Build what it had, in a modern form — nothing
+more. This pipeline's templates want to add a lead-gen wizard, an "order a
+site visit" CTA and a pricing page; if the source site had none of those, adding
+them is inventing a business offer, and the client will (rightly) call it out.
+Feature invention is the same failure as fact invention (pitfalls 27–28), and
+it is easier to commit because the template hands it to you.
+
+*The old site is copy, not fact.* A site being modernised is usually old enough
+that its address, hours, trading name and what the business calls itself have
+all changed — and directories echo the stale values, which feels like
+confirmation. Verify against something current (Google Maps listing, a photo of
+the notice on the premises, the owner) before launch, and say in the README
+which facts you verified and which you carried over unverified. (Pitfall 37.)
+
+Also separate **what the business is** from **its registered name**. The
+registry name belongs in the billing block and the copyright line, nowhere
+else; the brand descriptor, titles, meta descriptions, manifest and JSON-LD
+`@type` all describe what it actually is. (Pitfall 38.)
+
 ### 2. Scaffold — engine first, tokens first
 - Copy `assets/engine/*` into place (table above).
 - Open `css/styles.css` and set the brand in the `:root` tokens (`--c-dark`,
@@ -171,6 +193,20 @@ Details in `references/seo-legal-perf.md`. The must-haves:
 - Accessibility: one `<h1>` per page, a "skip to content" link, keyboard-usable
   nav, `prefers-reduced-motion` respected.
 
+**Locale typography.** Apply the target language's rules, not English ones.
+For Slovak/Czech: the parenthetical dash is `–`, never `—`, and one-letter
+prepositions (a, i, o, u, v, s, z, k) are bound to the next word with `&nbsp;`
+so they don't dangle at a line end — on a narrow phone that happens in nearly
+every paragraph. Do it per language: a bilingual site keeps `—` on its English
+pages and adds no non-breaking spaces there. Mark foreign-language phrases with
+`lang` (an English phrase in Slovak copy, the Slovak legal name in English
+pages) or screen readers mispronounce them. (Pitfall 36.)
+
+**Headings follow the outline, not the type scale.** Exactly one `h1` per page
+and no skipped level. Pick the level from the document structure, then style it
+to whatever size it needs — a hero card heading is `h2` at card size, footer
+column headings are `h2` at footer size. (Pitfall 35.)
+
 ### 6. Verify in a real browser (do not skip)
 Run `node scripts/verify_site.js --root . --ignore '\.jpg$'` (ignore the photo
 names that intentionally 404 before upload). It serves the site, loads every
@@ -192,6 +228,30 @@ node   scripts/audit_browser.js --root .     # vykreslené: pretečenie, kontras
 node   scripts/verify_site.js   --root .     # beh: chyby JS, assety, mobilné menu
 ```
 
+**Then stress-test it.** The scripts check what you already thought of. These
+four scenarios are what actually found the bugs on a site that had passed all
+three — run them before calling anything done:
+
+1. **Measure the nav breakpoint, don't pick it.** Temporarily set the mobile-nav
+   media query to `1px` so the desktop header renders at every width, then
+   binary-search the narrowest width with no horizontal overflow, in the
+   *longest* language the site ships. Set the media query one pixel below the
+   result and write the number and its dependencies into a CSS comment. A round
+   number here means 1024 px and 1152 px screens scroll sideways. (Pitfall 31.)
+2. **Sweep for overflow with the mask off.** `body` must not have
+   `overflow-x: hidden` (pitfall 30). Sweep every page at 320 / 360 / 375 / 390 /
+   412 / 768 px, then twice more: once with the WCAG 1.4.12 text-spacing
+   override applied, and once with a 30-character unbreakable word injected into
+   an `h1`. Flex items need `overflow-wrap: anywhere`, not `break-word`, because
+   their automatic minimum size ignores `break-word`.
+3. **Tab through the open mobile menu.** Open it at 390 px and press Tab ten
+   times. Every stop must be inside the header or the nav. If focus lands on the
+   page behind, the background is not `inert`. (Pitfall 33.)
+4. **Check computed values at the width each media query targets**, not just at
+   the widths you happen to screenshot — a narrow-screen override placed above
+   the rule it overrides is dead and looks perfectly fine in review.
+   (Pitfall 34.)
+
 Then do the two passes no script can do:
 
 - **Trace every number, brand and claim** on the site back to the brief or to
@@ -208,6 +268,20 @@ Then do the two passes no script can do:
   common things (via `config.js`), add photos, set up form delivery
   (Web3Forms), analytics, the map, and how to deploy (Netlify / GitHub Pages /
   FTP), plus a pre-launch checklist.
+- On a project big enough that the README stops being readable, split it:
+  `docs/PRIRUCKA.md` (numbered procedures for the person editing the site —
+  change the phone, swap a photo, add a page to the menu, what to do when it
+  breaks) and `docs/TECHNICKA-DOKUMENTACIA.md` (data flow, every breakpoint and
+  what it does, colour tokens with their measured contrast ratios, and an honest
+  **"weak points"** section: duplicated headers, hand-maintained data, anything
+  on the edge of fitting). Verify every factual claim in the docs against the
+  files before committing — a wrong line count teaches the next reader to
+  distrust the whole document.
+- Add a repo-owned checker (`scripts/kontrola.py`) for the invariants that are
+  specific to *this* site and that the generic audits cannot know: locale
+  typography, heading order, repeated paragraphs, unused selectors, the
+  registered name outside the billing block. It pays for itself the first time
+  it catches your own automation.
 - Add `.nojekyll` (GitHub Pages), a `netlify.toml` (headers + 404 + caching),
   `site.webmanifest`, `.gitignore`.
 - **Cache-bust every local CSS/JS reference.** Run
