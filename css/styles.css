@@ -106,7 +106,10 @@ body {
   background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* Dlhe slovo (e-mail, adresa, nazov) sa zlomi namiesto toho, aby vytlacilo
+     stranku do sirky. Zamerne tu NIE JE overflow-x: hidden — to by pretecenie
+     len zakrylo a chyby v rozlozeni by sa nedali odhalit ani testom. */
+  overflow-wrap: break-word;
 }
 img, svg, video { max-width: 100%; display: block; height: auto; }
 img { border-style: none; }
@@ -142,8 +145,6 @@ strong { font-weight: 700; }
 /* Farebné podklady sekcií — striedaním vzniká veselý rytmus.
    Text ostáva vždy tmavý, mení sa len pozadie. */
 .section--alt   { background: var(--c-bg-alt); }
-.section--cream { background: var(--c-tint-cream); }
-.section--lime  { background: var(--c-tint-lime); }
 .section--sun   { background: var(--c-tint-sun); }
 .section--sky   { background: var(--c-tint-sky); }
 
@@ -182,10 +183,6 @@ p:last-child { margin-bottom: 0; }
 .text-center { text-align: center; }
 .mt-1 { margin-top: 1rem; }
 .mt-2 { margin-top: 1.6rem; }
-.visually-hidden {
-  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
 
 /* 5. TLAČIDLÁ =========================================================== */
 .btn {
@@ -376,7 +373,7 @@ p:last-child { margin-bottom: 0; }
   background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
   padding: clamp(1.25rem, 3vw, 1.75rem); width: 100%; max-width: 400px;
 }
-.hero__card h3 { color: var(--c-dark); margin-bottom: .9rem; }
+.hero__card h2 { font-size: var(--fs-500); font-weight: 700; color: var(--c-dark); margin-bottom: .9rem; }
 .hero__card .text-muted { font-size: var(--fs-300); margin-top: 1rem; }
 .hero__card .text-muted svg {
   width: 17px; height: 17px; display: inline-block; vertical-align: -3px;
@@ -475,7 +472,10 @@ p:last-child { margin-bottom: 0; }
 
 /* 11. ZOZNAM S FAJOČKAMI ================================================ */
 .tick-list { list-style: none; padding-left: 0; display: grid; gap: .55rem; }
-.tick-list li { display: flex; gap: .7rem; align-items: flex-start; }
+/* „anywhere" (nie „break-word") je tu nutne: polozka je flexbox a jej text
+   je anonymna flex polozka s min-width: auto. Bez toho sa pri zvacsenom
+   rozostupe pismen (WCAG 1.4.12) nezalomi a vytlaci stranku do sirky. */
+.tick-list li { display: flex; gap: .7rem; align-items: flex-start; overflow-wrap: anywhere; }
 .tick-list li::before {
   content: ""; flex: none; width: 20px; height: 20px; margin-top: .28rem; border-radius: 50%;
   background: var(--c-accent-100) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A85400' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/13px no-repeat;
@@ -572,7 +572,7 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 /* 17. PÄTIČKA =========================================================== */
 .site-footer { background: var(--c-dark-900); color: #DBC8B6; }
 .site-footer > .container { padding-top: clamp(2rem, 3.6vw, 2.75rem); }
-.site-footer h4 { color: #fff; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 1rem; }
+.site-footer h2 { color: #fff; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 1rem; }
 .site-footer a { color: #DBC8B6; }
 .site-footer a:hover { color: var(--c-accent-300); }
 
