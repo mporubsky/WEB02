@@ -60,19 +60,18 @@ výhradne do fakturačných údajov.
 ## ⚠ Čo treba overiť pred spustením
 
 Väčšina textov je prevzatá z webu z roku 2004, keď prevádzka ešte fungovala ako
-opatrovateľské centrum. Adresa, hodiny a označenie prevádzky sú už opravené
-podľa tabule na dverách a Google Maps; zvyšok prosím potvrďte.
+opatrovateľské centrum. Adresa, hodiny, formy opatery aj označenie prevádzky sú
+už opravené podľa tabule na dverách a Google Maps.
 
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **Predĺžená opatera `6:00 – 19:00` a víkendy „po dohode"** — z roku 2004, prevádzková doba na dverách je len `7:30 – 17:30` | `js/config.js` → `business.hours` | **Áno** |
-| 3 | **Sekcia „Formy opatery"** na stránke Ponuka (celodenná, poldenná, hodinová, večerná, nočná, víkendová, celotýždňová) — to je ponuka pôvodného opatrovateľského centra | `ponuka.html` | **Áno** |
-| 4 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité) | `assets/img/` | Nie, ale odporúčam |
+| 2 | **„Výborná poloha, približne 5 minút od centra"** — tvrdenie z pôvodného webu, písané ešte o starej adrese | `ponuka.html`, karta „Kde" | Nie, ale overte |
+| 3 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité) | `assets/img/` | Nie, ale odporúčam |
 
-**Otváracie hodiny.** Na webe je `7:30 – 17:30` — prevádzková doba z tabule na
-dverách. Pôvodný web uvádzal `7:00 – 17:00` na slovenskej stránke a
-`8 a.m. – 3 p.m.` na anglickej; ani jedno už neplatí.
+**Otváracie hodiny.** Web uvádza jediné hodiny — `7:30 – 17:30`, prevádzkovú
+dobu z tabule na dverách. Pôvodný web mal `7:00 – 17:00` na slovenskej stránke
+a `8 a.m. – 3 p.m.` na anglickej; ani jedno už neplatí.
 
 **Čo som z pôvodného webu nepreniesol:**
 
@@ -82,6 +81,11 @@ dverách. Pôvodný web uvádzal `7:00 – 17:00` na slovenskej stránke a
   v Petržalke"** — dnes je prevádzka na Gustáva Mallého 2.
 - **Mapku z `atlas.sk`** — bol to screenshot cudzej mapy. Nahradil ju odkaz
   „Zobraziť na mape" na kontaktnej stránke.
+- **Predĺženú opateru `6:00 – 19:00`, víkendy „po dohode", vetu „Kedykoľvek
+  budete potrebovať — podľa dohody" a doplnkové formy opatery** (poldenná,
+  hodinová, večerná, nočná, víkendová, celotýždňová) — ponuka pôvodného
+  opatrovateľského centra. Na webe zostáva celodenná opatera v pondelok až
+  piatok 7:30 – 17:30.
 
 Ak niečo z toho platí aj dnes, dajte vedieť a doplním to.
 

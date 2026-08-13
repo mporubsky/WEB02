@@ -50,14 +50,9 @@ window.MH_CONFIG = {
 
     /* Tabuľka hodín — vykresľuje sa na úvode, v ponuke a na kontakte.
        Riadky môžete pridávať aj uberať, poradie sa zachová.
-
-       Prvý riadok je prevádzková doba z tabuľky na dverách prevádzky.
-       ⚠ Zvyšné dva riadky sú prevzaté z pôvodného webu (2004), keď ešte
-       išlo o opatrovateľské centrum — pred spustením ich overte. */
+       Je to prevádzková doba z tabuľky na dverách prevádzky. */
     hours: [
-      { d: "Pondelok – Piatok", h: "7:30 – 17:30" },
-      { d: "Predĺžená opatera", h: "6:00 – 19:00 (po dohode)" },
-      { d: "Sobota – Nedeľa",   h: "Po dohode" }
+      { d: "Pondelok – Piatok", h: "7:30 – 17:30" }
     ]
   },
 
