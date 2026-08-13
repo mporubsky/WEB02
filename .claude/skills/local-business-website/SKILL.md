@@ -186,7 +186,7 @@ already passed it and looked perfect in screenshots. Run all three, and fix what
 they report:
 
 ```
-python scripts/bump_assets_version.py        # ?v= musí sedieť s obsahom css/js
+python scripts/bump_assets_version.py        # ?v= musí sedieť s obsahom css/js/assets
 python scripts/audit_html.py    --root .     # zdrojový kód: odkazy, kotvy, data-mh, SEO, zástupné texty
 node   scripts/audit_browser.js --root .     # vykreslené: pretečenie, kontrast, dotykové plochy
 node   scripts/verify_site.js   --root .     # beh: chyby JS, assety, mobilné menu
@@ -211,9 +211,13 @@ Then do the two passes no script can do:
 - Add `.nojekyll` (GitHub Pages), a `netlify.toml` (headers + 404 + caching),
   `site.webmanifest`, `.gitignore`.
 - **Cache-bust every local CSS/JS reference.** Run
-  `python scripts/bump_assets_version.py` — it sets `?v=` to a hash of the CSS/JS
-  contents, so the version changes exactly when the files do. Run it **before
-  every push that touched `css/` or `js/`**; a date you have to remember to bump
+  `python scripts/bump_assets_version.py` — it sets `?v=` to a hash of the CSS,
+  JS **and brand images** (`assets/**/*.svg`, `assets/**/*.png`), so the version
+  changes exactly when the files do. Brand images belong in it: a re-theme
+  changes the logo and favicon while their filenames stay put, and hosts serve
+  `/assets/*` with a year-long `Cache-Control`. Photos (`.jpg`) stay unversioned —
+  new photos get new filenames. Run it **before every push that touched `css/`,
+  `js/` or `assets/`**; a date you have to remember to bump
   is a rule you will break (pitfall 14 — and it was broken again *after* being
   written down, which is why this is a script now). `audit_html.py` fails the
   build when the version no longer matches the content.
@@ -292,8 +296,9 @@ Build:
 - `scripts/render_raster.js` — SVG → PNG (OG 1200×630 + favicons) via Chromium.
 - `scripts/optimize_photos.py` — EXIF-fix, strip, resize, recompress, rename.
 - `scripts/to_webp.py` — WebP siblings + idempotent `<picture>` wrapping (−35 %).
-- `scripts/bump_assets_version.py` — sets `?v=` from a hash of css/js content
-  (`--check` only reports). Run before any push touching `css/` or `js/`.
+- `scripts/bump_assets_version.py` — sets `?v=` from a hash of css/js **and
+  brand images** (`--check` only reports). Run before any push touching
+  `css/`, `js/` or `assets/`.
 
 Check (all three before delivery):
 - `scripts/verify_site.js` — runtime: JS errors, broken assets, mobile menu, screenshots.
@@ -301,6 +306,10 @@ Check (all three before delivery):
   `data-mh` paths, SEO meta, and **placeholder text leaking to visitors**.
 - `scripts/audit_browser.js` — rendered: horizontal overflow (names the culprit),
   WCAG contrast, 24 px tap targets, unfilled data.
+
+All four walk subdirectories, so a site with a language branch (`/en/`) is
+covered too, and `audit_html.py` resolves relative links against each page's own
+directory rather than the project root.
 
 Each takes `--root .` and `--help`; the audits exit non-zero on real problems, so
 they can gate a delivery. They are deliberately quiet about known non-issues

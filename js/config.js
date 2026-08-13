@@ -1,54 +1,51 @@
 /* =========================================================================
-   BABYLAND — CENTRÁLNA KONFIGURÁCIA  (jediný súbor pre bežné zmeny)
+   BABYLAND — údaje centra
    -------------------------------------------------------------------------
    Toto je jediný súbor, ktorý treba upraviť pri bežných zmenách: telefón,
-   e-mail, adresa, otváracie hodiny a odkaz na mapu.
-   Hodnoty sa automaticky prepíšu do celého webu cez atribúty
-   data-mh v HTML (spracúva main.js). Miesta na doplnenie sú označené „⚠ DOPLNIŤ".
+   e-mail, adresa, otváracie hodiny a odkaz na mapu. Hodnoty sa automaticky
+   doplnia na všetky slovenské aj anglické stránky (spracúva ich js/main.js).
 
-   POZOR: Ak zmeníte telefón, e-mail alebo adresu, prepíšte ich aj v bloku
-   JSON-LD na konci index.html — ten sa z tohto súboru NEPLNÍ a Google by
-   inak čítal starý údaj. Návod je v README.md.
+   PO KAŽDEJ ZMENE spustite:
+     python3 .claude/skills/local-business-website/scripts/bump_assets_version.py
+   inak môžu návštevníci ešte dlho vidieť staré údaje z pamäte prehliadača.
+
+   DVE MIESTA, KTORÉ SA ODTIAĽTO NEPLNIA a treba ich prepísať ručne:
+     • otváracie hodiny na anglických stránkach (en/index.html, en/contact.html)
+     • blok „application/ld+json" na konci index.html — číta ho Google
    ========================================================================= */
 
 window.MH_CONFIG = {
 
   business: {
-    name:      "Mgr. Jana Kamenská – 1. súkromné opatrovateľské centrum BABYLAND",
-    shortName: "BABYLAND",
-    domain:    "babyland-centrum.sk",
-    url:       "https://www.babyland-centrum.sk",
-    ico:       "40 646 149",
-    // Číslo živnostenského registra (namiesto DIČ – živnostník neplatca DPH)
+    /* Obchodné meno tak, ako je v živnostenskom registri */
+    name: "Mgr. Jana Kamenská – 1. súkromné opatrovateľské centrum BABYLAND",
+    ico: "40 646 149",
     zivnostRegister: "106-10631",
-    dic:       "",                               // ⚠ DOPLNIŤ, ak sa má uvádzať
-    icDph:     "",                               // prázdne = neplatca DPH
 
-    email:     "info@babyland-centrum.sk",
+    /* ⚠ Telefón a e-mail sú prevzaté z pôvodného webu (2004) —
+       pred spustením overte, že stále platia. */
+    phone: "0908 41 40 91",        // ako sa zobrazí návštevníkovi
+    phoneHref: "+421908414091",    // na čo sa vytočí po kliknutí (bez medzier)
+    email: "info@babyland-centrum.sk",
 
-    // Telefón prevzatý z pôvodného webu – pred spustením overte, že platí.
-    phone:     "0908 41 40 91",                  // ako sa zobrazí návštevníkovi
-    phoneHref: "+421908414091",                  // tel: formát (bez medzier)
-
-    /* SÍDLO = registrové / fakturačné údaje (živnostenský register, faktúry,
-       GDPR – prevádzkovateľ). Nepoužíva sa v pätičke ani na mape. */
+    /* SÍDLO — fakturačné údaje zo živnostenského registra.
+       Zobrazuje sa len v sekcii „Fakturačné údaje" na kontakte. */
     address: {
-      street: "Jána Kostku 2428/18",
-      zip:    "901 01",
-      city:   "Malacky",
-      full:   "Jána Kostku 2428/18, 901 01 Malacky"
+      full: "Jána Kostku 2428/18, 901 01 Malacky"
     },
 
-    /* PREVÁDZKA = kam reálne chodia rodičia s deťmi. Do pätičky, na kontakt
-       a do JSON-LD patrí TOTO (zhoduje sa s mapou aj Google profilom). */
+    /* PREVÁDZKA — kam reálne chodia rodičia s deťmi. Zobrazuje sa v pätičke,
+       v hero karte a na kontakte, a musí sedieť s odkazom na mapu nižšie.
+       ⚠ DOPLNIŤ PSČ priamo do textu, napr. „Nobelovo nám. 6, 851 01 Bratislava". */
     showroom: {
-      street: "Nobelovo nám. 6",
-      zip:    "",                                // ⚠ DOPLNIŤ PSČ prevádzky
-      city:   "Bratislava",
-      full:   "Nobelovo nám. 6, Bratislava"
+      full: "Nobelovo nám. 6, Bratislava"
     },
 
+    /* Krátky zápis hodín — používa sa v pätičke */
     hoursShort: "Po – Pi: 7:00 – 17:00",
+
+    /* Tabuľka hodín — vykresľuje sa na úvode, v ponuke a na kontakte.
+       Riadky môžete pridávať aj uberať, poradie sa zachová. */
     hours: [
       { d: "Pondelok – Piatok", h: "7:00 – 17:00" },
       { d: "Predĺžená opatera", h: "6:00 – 19:00 (po dohode)" },
@@ -56,8 +53,8 @@ window.MH_CONFIG = {
     ]
   },
 
-  /* ---- Odkaz na mapu ----------------------------------------------------
-     Kam vedie „Zobraziť na mape" na kontaktnej stránke. */
+  /* Kam vedie odkaz „Zobraziť na mape" na kontaktnej stránke.
+     Ak by ukazoval nepresne, nahraďte adresu v odkaze súradnicami. */
   maps: {
     directLink: "https://www.google.com/maps/search/?api=1&query=Nobelovo+n%C3%A1m.+6%2C+Bratislava"
   }

@@ -1,32 +1,39 @@
 /* =========================================================================
-   BABYLAND — Spoločná logika webu (main.js)
-   - Prepis firemných údajov z config.js do stránky (data-mh atribúty)
-   - Mobilná navigácia
-   - Tieň hlavičky pri skrolovaní
-   - Odhaľovanie prvkov pri skrolovaní (reveal)
-   - Vyplnenie roku v pätičke, mapa, sociálne siete, otváracie hodiny
+   BABYLAND — spoločná logika webu
+   -------------------------------------------------------------------------
+   Robí presne štyri veci:
+     1. doplní údaje z js/config.js do stránky (atribúty data-mh…)
+     2. vykreslí otváracie hodiny
+     3. doplní aktuálny rok do pätičky
+     4. obsluhuje mobilné menu a tieň hlavičky pri skrolovaní
+
+   Web nepoužíva formuláre, cookies ani meranie návštevnosti, takže tu nie je
+   ani žiadny kód, ktorý by čokoľvek odosielal alebo sledoval.
    ========================================================================= */
 (function () {
   "use strict";
+
   var CFG = window.MH_CONFIG || {};
   var B = CFG.business || {};
 
-  /* ---------- Pomocná: bezpečný prístup do vnoreného objektu ------------ */
+  /* Bezpečné čítanie vnorenej hodnoty, napr. get("business.showroom.full") */
   function get(path) {
     return path.split(".").reduce(function (o, k) {
       return (o && o[k] !== undefined && o[k] !== null) ? o[k] : undefined;
     }, CFG);
   }
 
-  /* ---------- 1) Prepis údajov (data-mh, data-mh-href, data-mh-tel) ----- */
+  /* 1) Doplnenie údajov z config.js -------------------------------------
+     data-mh="cesta"       → nahradí text prvku
+     data-mh-tel           → nastaví odkaz tel:
+     data-mh-mail          → nastaví odkaz mailto:
+     data-mh-href="cesta"  → nastaví odkaz z config.js                    */
   function bindData() {
     document.querySelectorAll("[data-mh]").forEach(function (el) {
       var val = get(el.getAttribute("data-mh"));
-      // Prázdna hodnota v config.js = ponechá sa východiskový text v HTML
-      // (napr. „Na vyžiadanie" v cenníku, kým nie sú doplnené reálne ceny).
+      // Prázdna hodnota v config.js = v HTML ostane pôvodný text.
       if (val !== undefined && val !== "") el.textContent = val;
     });
-    // Odkazy typu tel: / mailto: / href
     document.querySelectorAll("[data-mh-tel]").forEach(function (el) {
       if (B.phoneHref) el.setAttribute("href", "tel:" + B.phoneHref);
     });
@@ -39,186 +46,76 @@
     });
   }
 
-  /* ---------- 2) Otváracie hodiny (zoznam) ------------------------------ */
+  /* 2) Otváracie hodiny --------------------------------------------------
+     Vykresľuje sa len na slovenských stránkach; anglické majú hodiny
+     napísané priamo v HTML, aby v nich neboli slovenské názvy dní.        */
   function renderHours() {
     var host = document.querySelector("[data-mh-hours]");
     if (!host || !Array.isArray(B.hours)) return;
     host.innerHTML = B.hours.map(function (row) {
-      return '<div class="hours-row"><span>' + row.d + '</span><b>' + row.h + '</b></div>';
+      return '<div class="hours-row"><span>' + row.d + "</span><b>" + row.h + "</b></div>";
     }).join("");
   }
 
-  /* ---------- 3) Oblasti pôsobnosti (tagy) ------------------------------ */
-  function renderCoverage() {
-    var host = document.querySelector("[data-mh-coverage]");
-    if (!host || !Array.isArray(B.coverage)) return;
-    host.innerHTML = B.coverage.map(function (c) {
-      return '<span class="pill">' + c + "</span>";
-    }).join("");
-  }
-
-  /* ---------- 4) Google mapa alebo zástupný blok ------------------------ */
-  function renderMap() {
-    var host = document.querySelector("[data-mh-map]");
-    if (!host) return;
-    var M = CFG.maps || {};
-    if (M.embedSrc) {
-      host.classList.add("map-embed");
-      host.innerHTML = '<iframe src="' + M.embedSrc + '" loading="lazy" ' +
-        'referrerpolicy="no-referrer-when-downgrade" title="Mapa – ' +
-        (B.shortName || "") + '" allowfullscreen></iframe>';
-    } else {
-      host.classList.add("map-placeholder");
-      host.innerHTML =
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>' +
-        "<p><strong>" + ((B.showroom || B.address || {}).full || "") + "</strong></p>" +
-        '<a class="btn btn--secondary btn--sm" target="_blank" rel="noopener" href="' +
-        (M.directLink || "#") + '">Otvoriť v Google Mapách</a>';
-    }
-  }
-
-  /* ---------- 5) Sociálne siete ----------------------------------------- */
-  function renderSocial() {
-    var host = document.querySelector("[data-mh-social]");
-    if (!host) return;
-    var S = CFG.social || {};
-    var items = [];
-    if (S.facebook) items.push(link(S.facebook, "Facebook",
-      '<path d="M14 9h3l.5-3H14V4.5c0-.9.3-1.5 1.6-1.5H17V.3C16.7.2 15.8 0 14.8 0 12.5 0 11 1.4 11 4v2H8v3h3v9h3V9Z"/>'));
-    if (S.instagram) items.push(link(S.instagram, "Instagram",
-      '<rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3"/>'));
-    if (S.googleReviews) items.push(link(S.googleReviews, "Google recenzie",
-      '<path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 16.9 5.8 20.6l1.6-6.7L2.2 9.4l6.9-.6L12 2Z"/>'));
-    if (!items.length) { host.style.display = "none"; return; }
-    host.innerHTML = items.join("");
-
-    function link(href, label, svg) {
-      return '<a href="' + href + '" target="_blank" rel="noopener" aria-label="' + label +
-        '"><svg viewBox="0 0 24 24" fill="currentColor">' + svg + "</svg></a>";
-    }
-  }
-
-  /* ---------- 6) Rok v pätičke ------------------------------------------ */
+  /* 3) Aktuálny rok v pätičke -------------------------------------------- */
   function setYear() {
     document.querySelectorAll("[data-mh-year]").forEach(function (el) {
       el.textContent = new Date().getFullYear();
     });
   }
 
-  /* ---------- 7) Mobilná navigácia -------------------------------------- */
+  /* 4a) Mobilné menu ----------------------------------------------------- */
   function initNav() {
     var toggle = document.querySelector(".nav-toggle");
     var nav = document.getElementById("main-nav");
     if (!toggle || !nav) return;
-    function close() {
-      nav.classList.remove("is-open");
-      document.body.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.querySelector(".icon-open").style.display = "";
-      toggle.querySelector(".icon-close").style.display = "none";
-    }
-    toggle.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
+
+    var iconOpen = toggle.querySelector(".icon-open");
+    var iconClose = toggle.querySelector(".icon-close");
+
+    function setState(open) {
+      nav.classList.toggle("is-open", open);
       document.body.classList.toggle("nav-open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.querySelector(".icon-open").style.display = open ? "none" : "";
-      toggle.querySelector(".icon-close").style.display = open ? "block" : "none";
+      if (iconOpen) iconOpen.style.display = open ? "none" : "";
+      if (iconClose) iconClose.style.display = open ? "block" : "none";
+    }
+
+    toggle.addEventListener("click", function () {
+      setState(!nav.classList.contains("is-open"));
     });
-    nav.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", close); });
-    window.addEventListener("resize", function () { if (window.innerWidth > 940) close(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    // Klik na položku menu, Escape aj prechod na širokú obrazovku menu zavrú.
+    nav.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setState(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setState(false);
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 940) setState(false);
+    });
   }
 
-  /* ---------- 8) Tieň hlavičky pri skrolovaní --------------------------- */
+  /* 4b) Tieň hlavičky pri skrolovaní ------------------------------------- */
   function initHeaderScroll() {
     var header = document.querySelector(".site-header");
     if (!header) return;
-    var onScroll = function () { header.classList.toggle("is-scrolled", window.scrollY > 8); };
+    function onScroll() { header.classList.toggle("is-scrolled", window.scrollY > 8); }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
-  /* ---------- 9) Odhaľovanie prvkov (reveal) ---------------------------- */
-  function initReveal() {
-    var els = document.querySelectorAll("[data-reveal]");
-    if (!els.length) return;
-    if (!("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("is-visible"); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-    els.forEach(function (el) { io.observe(el); });
-  }
-
-  /* ---------- 10) Cookies + analytika ----------------------------------- */
-
-  /* ---------- Inicializácia --------------------------------------------- */
   function init() {
     bindData();
     renderHours();
-    renderCoverage();
-    renderMap();
-    renderSocial();
     setYear();
     initNav();
     initHeaderScroll();
-    initReveal();
   }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
-  } else { init(); }
-
-  /* ---------- Odoslanie dopytu (zdieľané: wizard + kontakt) --------------
-     Vráti Promise. Poradie doručenia:
-       1. Web3Forms (ak je nastavený form.web3formsKey)
-       2. Vlastné API (ak je nastavený form.customEndpoint)
-       3. mailto: fallback (otvorí e-mailového klienta) – vždy funguje
-     ---------------------------------------------------------------------- */
-  function sendLead(data, meta) {
-    meta = meta || {};
-    var F = CFG.form || {};
-    var subject = meta.subject || ("Nový dopyt z webu – " + (B.shortName || ""));
-
-    // 1) Web3Forms
-    if (F.web3formsKey) {
-      var payload = Object.assign({
-        access_key: F.web3formsKey,
-        subject: subject,
-        from_name: (B.shortName || "Web") + " – formulár",
-        botcheck: ""
-      }, data);
-      return fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload)
-      }).then(function (r) { return r.json(); })
-        .then(function (j) { if (!j.success) throw new Error(j.message || "Web3Forms error"); return j; });
-    }
-
-    // 2) Vlastné API
-    if (F.customEndpoint) {
-      return fetch(F.customEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Object.assign({ subject: subject }, data))
-      }).then(function (r) { if (!r.ok) throw new Error("Endpoint error"); return r.json().catch(function () { return {}; }); });
-    }
-
-    // 3) mailto fallback
-    return new Promise(function (resolve) {
-      var lines = Object.keys(data).map(function (k) { return k + ": " + data[k]; });
-      var href = "mailto:" + (B.email || "") +
-        "?subject=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(lines.join("\n"));
-      window.location.href = href;
-      resolve({ success: true, fallback: "mailto" });
-    });
+  } else {
+    init();
   }
-
-  // Sprístupniť pomocné funkcie ďalším skriptom (wizard/form)
-  window.MH = { get: get, config: CFG, sendLead: sendLead };
 })();

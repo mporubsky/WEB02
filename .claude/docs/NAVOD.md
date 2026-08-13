@@ -163,7 +163,7 @@ Plus dve veci, ktoré skript nezvládne:
 
 Telefón, hodiny, ceny, adresa — všetko je na jednom mieste v `js/config.js`.
 
-**Po každej zmene `config.js` alebo `styles.css` musí prebehnúť:**
+**Po každej zmene v `js/`, `css/` alebo `assets/` musí prebehnúť:**
 
 ```
 python .claude/skills/local-business-website/scripts/bump_assets_version.py
@@ -193,7 +193,7 @@ teraz nahlási ako chybu.
 | `optimize_photos.py` | EXIF, zmenšenie, prekódovanie fotiek |
 | `to_webp.py` | WebP + obalenie do `<picture>` |
 | `render_raster.js` | náhľad pre sociálne siete + ikony |
-| `bump_assets_version.py` | verzia `?v=` z obsahu súborov |
+| `bump_assets_version.py` | verzia `?v=` z obsahu css, js a značkových obrázkov |
 | `audit_html.py` | kontrola zdrojového kódu |
 | `audit_browser.js` | kontrola vykreslenej stránky |
 | `verify_site.js` | kontrola behu stránky |

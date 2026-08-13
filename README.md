@@ -44,7 +44,7 @@ Medzi jazykmi sa prepína odkazom **English** / **Slovensky** v menu.
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **Adresa prevádzky** `Nobelovo nám. 6, Bratislava` + doplniť PSČ | `js/config.js` → `business.showroom` | **Áno** |
+| 2 | **Adresa prevádzky** `Nobelovo nám. 6, Bratislava` — doplňte do nej PSČ | `js/config.js` → `business.showroom.full` | **Áno** |
 | 3 | **Otváracie hodiny** | `js/config.js` → `business.hours` | **Áno** |
 | 4 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité) | `assets/img/` | Nie, ale odporúčam |
 
@@ -183,10 +183,15 @@ Statické HTML + jeden CSS súbor + dva súbory vanilla JS. Žiadne závislosti,
 index.html …            slovenské stránky
 en/                     anglická vetva (vlastná navigácia)
 css/styles.css          celý dizajn; značkové farby sú v :root na začiatku
-js/config.js            údaje firmy (jediný súbor na bežné zmeny)
-js/main.js              napĺňanie data-mh, mobilné menu, tieň hlavičky, reveal
-assets/img/             fotografie a zástupné SVG
+js/config.js            údaje centra (jediný súbor na bežné zmeny)
+js/main.js              doplnenie údajov, hodiny, rok, mobilné menu
+assets/                 značka a ikony (favicon, logo-mark, PNG ikony)
+assets/img/             fotografie, zástupný hero obrázok a náhľad pre siete
 ```
+
+Žiadne knižnice, žiadny build. `js/main.js` má okolo 120 riadkov a robí len
+štyri veci: doplní údaje z `config.js`, vykreslí hodiny, doplní rok do pätičky
+a obsluhuje mobilné menu. Web neodosiela ani nesleduje nič.
 
 Farby sú prevzaté z **pôvodného loga BABYLAND** — oranžová `#FF9933` je
 vzorkovaná priamo z pôvodného nápisu, limetka `#99CC00` z trička postavičky
@@ -203,10 +208,13 @@ alebo farieb ich prekreslite:
 `node .claude/skills/local-business-website/scripts/render_raster.js`
 
 **Farebný rytmus stránok.** Sekcie striedajú svetlé podklady — pridajte triedu
-`section--lime`, `section--sun`, `section--sky` alebo `section--cream` k
-`<section class="section …">` a pozadie sa zmení. Farby ikon v kartách,
-odrážok v zoznamoch a prúžkov pri „Formách opatery" sa **striedajú samy**
-podľa poradia, netreba k nim nič dopisovať.
+`section--alt`, `section--cream`, `section--lime`, `section--sun` alebo
+`section--sky` k `<section class="section …">` a pozadie sa zmení.
+
+Farby **kariet** (`.card`), **odrážok** (`.tick-list`) aj **riadkov s formami
+opatery** (`.feature-list`) sa striedajú samy podľa poradia — oranžová,
+limetková, modrá, žltá. Nová položka dostane farbu automaticky, netreba k nej
+nič dopisovať.
 
 Prefarbenie značky = zmena premenných v `:root` v `css/styles.css`.
 Pozor na kontrast: `--c-accent` (oranžová) je **len dekoratívna** — biely text
@@ -215,8 +223,7 @@ na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte
 (`css`, `site.webmanifest`, `<meta name="theme-color">`, SVG v `assets/`)
 a spustite `audit_browser.js`.
 
-Kontrolné skripty (v `.claude/skills/local-business-website/scripts/`) —
-prehľadávajú aj podpriečinky, takže pokrývajú aj `en/`:
+Kontrolné skripty (v `.claude/skills/local-business-website/scripts/`):
 
 ```bash
 python3 scripts/bump_assets_version.py     # ?v= podľa obsahu css/js — po každej zmene
@@ -224,6 +231,12 @@ python3 scripts/audit_html.py    --root .  # odkazy, kotvy, SEO, zástupné text
 node    scripts/audit_browser.js --root .  # pretečenie, kontrast, dotykové plochy
 node    scripts/verify_site.js   --root .  # chyby JS, assety, mobilné menu + snímky
 ```
+
+Všetky štyri prehľadávajú aj podpriečinky, takže pokrývajú aj `en/`.
+
+Web je overený v prehliadači na šírkach **320, 390, 768 a 1280 px**: bez
+vodorovného pretečenia, bez orezaného textu, všetky dotykové plochy aspoň
+24 px a kontrast textu všade nad normou WCAG AA.
 
 `audit_html.py` hlási „chýba cookie lišta“ — je to očakávané, web žiadne
 cookies nenastavuje. Skripty v prehliadači potrebujú `playwright-core`
