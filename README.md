@@ -202,6 +202,12 @@ Ikony v `assets/` (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`,
 alebo farieb ich prekreslite:
 `node .claude/skills/local-business-website/scripts/render_raster.js`
 
+**Farebný rytmus stránok.** Sekcie striedajú svetlé podklady — pridajte triedu
+`section--lime`, `section--sun`, `section--sky` alebo `section--cream` k
+`<section class="section …">` a pozadie sa zmení. Farby ikon v kartách,
+odrážok v zoznamoch a prúžkov pri „Formách opatery" sa **striedajú samy**
+podľa poradia, netreba k nim nič dopisovať.
+
 Prefarbenie značky = zmena premenných v `:root` v `css/styles.css`.
 Pozor na kontrast: `--c-accent` (oranžová) je **len dekoratívna** — biely text
 na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte

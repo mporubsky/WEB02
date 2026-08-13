@@ -5,7 +5,7 @@
     </linearGradient>
   </defs>
   <rect width="800" height="600" fill="url(#g)"/>
-  <circle cx="672" cy="108" r="208" fill="#FF9933" opacity="0.16"/>
+  <circle cx="672" cy="108" r="208" fill="#FFD11A" opacity="0.16"/>
   <circle cx="25.1" cy="405.3" r="13.3" fill="#FFD11A" opacity="0.69"/>
   <circle cx="419.4" cy="510.0" r="16.1" fill="#FFD11A" opacity="0.61"/>
   <circle cx="480.8" cy="452.0" r="18.1" fill="#99CC00" opacity="0.6"/>
