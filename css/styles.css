@@ -237,16 +237,25 @@ p:last-child { margin-bottom: 0; }
    Šírka sa dopočíta z pomeru strán, aby sa nedeformoval. Bez „align-items:
    flex-start" vyššie by sa obrázok roztiahol na šírku celého stĺpca a nápis
    by sa v ňom vycentroval — teda odsadil od podnadpisu pod ním. */
-.brand__word { height: 20px; width: auto; }
-.brand__tag { font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--c-muted); }
+.brand__word { height: 26px; width: auto; }
+/* Popis pod nápisom musí zostať na JEDNOM riadku v oboch jazykoch. Slovenské
+   „Opatrovateľské centrum" je o polovicu dlhšie než anglické „Private day
+   care" — pri väčšom písme sa zalomilo na dva riadky a slovenská hlavička
+   potom vyzerala úplne inak než anglická. Veľkosť a preloženie sú zvolené
+   tak, aby bol slovenský text zhruba taký široký ako nápis nad ním; anglický
+   je kratší, čo je pri podnadpise v poriadku. */
+.brand__tag {
+  font-size: .62rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--c-muted); white-space: nowrap;
+}
 
-/* Na úzkych displejoch sa značka zmenší, aby v riadku zostalo miesto na
-   telefón aj hamburger. Musí byť AŽ ZA základnými pravidlami vyššie —
-   rovnaká špecifickosť, takže rozhoduje poradie. */
+/* Na najužších telefónoch sa značka v hlavičke zmenší a popis sa vynechá —
+   inak by sa do riadku nezmestil telefón ani hamburger. V pätičke je miesta
+   dosť, preto sú tieto pravidlá viazané na .site-header. */
 @media (max-width: 380px) {
-  .brand__mark { width: 34px; height: 34px; }
-  .brand__word { height: 18px; }
-  .brand__tag { font-size: .62rem; letter-spacing: .1em; }
+  .site-header .brand__mark { width: 32px; height: 32px; }
+  .site-header .brand__word { height: 19px; }
+  .site-header .brand__tag { display: none; }
 }
 
 .header-phone { display: inline-flex; align-items: center; gap: .45rem; font-weight: 700; color: var(--c-dark); white-space: nowrap; }
@@ -270,9 +279,12 @@ p:last-child { margin-bottom: 0; }
 }
 
 .main-nav { display: flex; align-items: center; gap: .35rem; }
+/* Vodorovné odsadenie položiek je utiahnuté zámerne: sedem položiek, značka
+   a telefón sa musia zmestiť do šírky obsahu (--container mínus okraje),
+   inak by menu vytŕčalo zo stránky. Na mobile sa aj tak prepisuje nižšie. */
 .main-nav a {
   color: var(--c-dark); font-weight: 600; font-size: .97rem;
-  padding: .5rem .8rem; border-radius: 8px; white-space: nowrap;
+  padding: .5rem .6rem; border-radius: 8px; white-space: nowrap;
   transition: background .15s var(--ease), color .15s var(--ease);
 }
 .main-nav a:hover { background: var(--c-bg-tint); color: var(--c-dark); }
@@ -296,12 +308,13 @@ p:last-child { margin-bottom: 0; }
 .nav-toggle .icon-close { display: none; }
 
 /* Mobilná navigácia: menu sa vysunie spod hlavičky.
-   Hranica 1140 px nie je náhodná — sedem položiek menu, značka a telefón
-   potrebujú v jednom riadku 1140 px. Pri nižšej hranici by sa medzi ňou
-   a 1140 px hlavička nezmestila a stránka by sa dala posúvať do strany
-   (týkalo by sa to bežných rozlíšení 1024 a 1152 px). Ak sa mení počet
-   položiek menu, treba túto hranicu premerať znova. */
-@media (max-width: 1140px) {
+   Hranica 1137 px nie je náhodná — slovenská hlavička (značka, sedem položiek
+   menu a telefón) potrebuje v jednom riadku 1138 px. Pri nižšej hranici by sa
+   v pásme medzi ňou a 1138 px hlavička nezmestila a stránka by sa dala
+   posúvať do strany; týkalo by sa to bežných rozlíšení 1024 a 1152 px.
+   Ak sa mení počet položiek menu alebo veľkosť značky, treba hranicu
+   premerať znova. */
+@media (max-width: 1137px) {
   .nav-toggle { display: inline-flex; }
   .main-nav {
     position: fixed; inset: var(--header-h) 0 auto 0;
