@@ -308,13 +308,13 @@ p:last-child { margin-bottom: 0; }
 .nav-toggle .icon-close { display: none; }
 
 /* Mobilná navigácia: menu sa vysunie spod hlavičky.
-   Hranica 1137 px nie je náhodná — slovenská hlavička (značka, sedem položiek
-   menu a telefón) potrebuje v jednom riadku 1138 px. Pri nižšej hranici by sa
-   v pásme medzi ňou a 1138 px hlavička nezmestila a stránka by sa dala
+   Hranica 1148 px nie je náhodná — slovenská hlavička (značka, sedem položiek
+   menu a telefón) potrebuje v jednom riadku 1149 px. Pri nižšej hranici by sa
+   v pásme medzi ňou a 1149 px hlavička nezmestila a stránka by sa dala
    posúvať do strany; týkalo by sa to bežných rozlíšení 1024 a 1152 px.
    Ak sa mení počet položiek menu alebo veľkosť značky, treba hranicu
    premerať znova. */
-@media (max-width: 1137px) {
+@media (max-width: 1148px) {
   .nav-toggle { display: inline-flex; }
   .main-nav {
     position: fixed; inset: var(--header-h) 0 auto 0;

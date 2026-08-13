@@ -1,9 +1,11 @@
-# BABYLAND — web centra
+# BABYLAND — web súkromnej materskej školy
 
 Moderná verzia pôvodného webu **babyland-centrum.sk** (2004, rámce generované
 z Wordu). Obsah je prevzatý z pôvodného webu — texty, štruktúra aj fotografie.
 Nič sa nedopĺňalo: web ponúka presne to, čo ponúkal predtým, len v podobe, ktorá
-funguje na mobile, dá sa nájsť v Google a dá sa upravovať.
+funguje na mobile, dá sa nájsť v Google a dá sa upravovať. Opravené sú údaje,
+ktoré medzitým prestali platiť — adresa prevádzky, otváracie hodiny a označenie
+prevádzky (viď nižšie).
 
 Web je **statický** — žiadny WordPress, žiadna databáza, žiadne zostavovanie
 (build). Sú to obyčajné HTML súbory, ktoré sa dajú nahrať kamkoľvek a otvoriť
@@ -37,30 +39,47 @@ Medzi jazykmi sa prepína odkazom **English** / **Slovensky** v menu.
 
 ---
 
+## Čím BABYLAND je
+
+Prevádzka je **súkromná materská škola** — tak je označená na tabuli na dverách
+aj v zápise na Google Maps („Babyland – Súkromná Materská Škola"). Na webe sa
+tak volá všade: v značke v hlavičke, v nadpisoch, v titulkoch stránok aj
+v štruktúrovaných dátach pre Google (`Preschool`).
+
+Názov **„Mgr. Jana Kamenská – 1. súkromné opatrovateľské centrum BABYLAND"** je
+obchodné meno zo živnostenského registra, teda meno **zriaďovateľa**. Nie je to
+označenie prevádzky, preto sa objavuje len na dvoch miestach: v sekcii
+„Zriaďovateľ a fakturačné údaje" na kontakte a v copyrighte v pätičke.
+
+**Adresa prevádzky:** Gustáva Mallého 2, 851 01 Bratislava (Petržalka).
+**Sídlo zriaďovateľa** je iné — Jána Kostku 2428/18, 901 01 Malacky — a patrí
+výhradne do fakturačných údajov.
+
+---
+
 ## ⚠ Čo treba overiť pred spustením
 
-Údaje sú prevzaté z webu z roku 2004 — prosím, potvrďte ich.
+Väčšina textov je prevzatá z webu z roku 2004, keď prevádzka ešte fungovala ako
+opatrovateľské centrum. Adresa, hodiny a označenie prevádzky sú už opravené
+podľa tabule na dverách a Google Maps; zvyšok prosím potvrďte.
 
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **Adresa prevádzky** `Nobelovo nám. 6, Bratislava` — doplňte do nej PSČ | `js/config.js` → `business.showroom.full` | **Áno** |
-| 3 | **Otváracie hodiny** | `js/config.js` → `business.hours` | **Áno** |
+| 2 | **Predĺžená opatera `6:00 – 19:00` a víkendy „po dohode"** — z roku 2004, prevádzková doba na dverách je len `7:30 – 17:30` | `js/config.js` → `business.hours` | **Áno** |
+| 3 | **Sekcia „Formy opatery"** na stránke Ponuka (celodenná, poldenná, hodinová, večerná, nočná, víkendová, celotýždňová) — to je ponuka pôvodného opatrovateľského centra | `ponuka.html` | **Áno** |
 | 4 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité) | `assets/img/` | Nie, ale odporúčam |
 
-Miesta na doplnenie sú v `js/config.js` označené `⚠ DOPLNIŤ`.
-
-**Hodiny si prosím prejdite pozorne.** Pôvodný web ich uvádzal dvakrát a zakaždým
-inak — slovenská stránka `7:00 – 17:00` (predĺžene `6:00 – 19:00`), anglická
-`8 a.m. – 3 p.m.` (s krajnými hodnotami 7 a.m. a 6 p.m.). Použil som slovenskú
-verziu na celom webe vrátane anglickej vetvy, aby si stránky neprotirečili.
+**Otváracie hodiny.** Na webe je `7:30 – 17:30` — prevádzková doba z tabule na
+dverách. Pôvodný web uvádzal `7:00 – 17:00` na slovenskej stránke a
+`8 a.m. – 3 p.m.` na anglickej; ani jedno už neplatí.
 
 **Čo som z pôvodného webu nepreniesol:**
 
 - **Cenu `1750 Sk za 10 stretnutí`** (sobotné hravé dopoludnia) — je v korunách
   a dávno neplatí. Cenník web nemá, rovnako ako ho nemal pôvodný.
 - **Oznam „Od 1. septembra 2004 aj v nových priestoroch na Fedinovej 7
-  v Petržalke"** — potvrdili ste, že platí Nobelovo nám. 6.
+  v Petržalke"** — dnes je prevádzka na Gustáva Mallého 2.
 - **Mapku z `atlas.sk`** — bol to screenshot cudzej mapy. Nahradil ju odkaz
   „Zobraziť na mape" na kontaktnej stránke.
 
