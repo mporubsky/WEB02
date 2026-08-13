@@ -1,0 +1,35 @@
+[build]
+  publish = "."
+
+# Vlastná stránka 404 (Netlify ju použije automaticky pre neexistujúce adresy)
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+
+# Obrázky a ikony sa nemenia často – môžu sa cachovať dlho
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# CSS a JS majú v odkaze ?v=… (cache-busting), takže tiež môžu ísť na dlhú cache.
+# Po úprave css/ alebo js/ spustite scripts/bump_assets_version.py – zmení sa ?v=
+# a prehliadače si stiahnu novú verziu.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

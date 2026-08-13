@@ -1,0 +1,20 @@
+# Systémové a editorové smeti
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# Závislosti nástrojov (samotný web žiadne nepotrebuje)
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Výstupy overovacích skriptov
+screenshots/
+_verify_shots/
+.cache/
