@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="{{BUSINESS_NAME}}">
+  <rect width="64" height="64" rx="14" fill="#2C3E50"/>
+  <g stroke="#E67E22" stroke-width="5" stroke-linecap="round">
+    <line x1="16" y1="20" x2="48" y2="20"/>
+    <line x1="16" y1="30" x2="48" y2="30"/>
+    <line x1="16" y1="40" x2="48" y2="40"/>
+  </g>
+  <line x1="16" y1="50" x2="48" y2="50" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+</svg>
