@@ -2,7 +2,7 @@
    BABYLAND — CENTRÁLNA KONFIGURÁCIA  (jediný súbor pre bežné zmeny)
    -------------------------------------------------------------------------
    Toto je jediný súbor, ktorý treba upraviť pri bežných zmenách: telefón,
-   e-mail, otváracie hodiny, ceny, doručovanie formulárov, mapa, analytika,
+   e-mail, otváracie hodiny, doručovanie formulárov, mapa, analytika,
    sociálne siete. Hodnoty sa automaticky prepíšu do celého webu cez atribúty
    data-mh v HTML (spracúva main.js). Miesta na doplnenie sú označené „⚠ DOPLNIŤ".
 
@@ -57,24 +57,6 @@ window.MH_CONFIG = {
 
     coverage: ["Bratislava", "Petržalka", "Staré Mesto"],
     responseTime: ""                             // ⚠ DOPLNIŤ, ak chcete sľubovať lehotu
-  },
-
-  /* ---- Cenník ------------------------------------------------------------
-     Ceny z pôvodného webu boli v slovenských korunách (rok 2004), preto sú
-     tu zámerne prázdne. Kým sú prázdne, v tabuľke zostane text „Na vyžiadanie".
-     Doplňte reálnu sumu v eurách, napr. "od 350 € / mesiac" – prejaví sa
-     okamžite na celom webe.
-     ---------------------------------------------------------------------- */
-  pricing: {
-    celodenna:   "",     // celodenná opatera, Po–Pi 7:00–17:00
-    predlzena:   "",     // príplatok za predĺženú opateru (6:00–19:00)
-    poldenna:    "",     // poldenná opatera
-    hodinova:    "",     // hodinová opatera
-    vecerna:     "",     // večerná / nočná opatera
-    vikendova:   "",     // víkendová opatera
-    celotyzdnova:"",     // celotýždňová opatera
-    kurzJazyk:   "",     // kurz angličtiny / nemčiny pre deti
-    obhliadka:   "Obhliadka ZDARMA"
   },
 
   /* ---- Doručovanie formulárov ------------------------------------------

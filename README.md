@@ -21,12 +21,16 @@ zvyšok je vylepšenie.
 | 1 | **Overiť telefón** `0908 41 40 91` — je z webu z roku 2004 | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
 | 2 | **Overiť adresu prevádzky** `Nobelovo nám. 6, Bratislava` + doplniť PSČ | `js/config.js` → `business.showroom` | **Áno** |
 | 3 | **Kľúč na doručovanie formulárov** (Web3Forms, zdarma) | `js/config.js` → `form.web3formsKey` | **Áno** – bez neho sa formulár odošle cez e-mailový program |
-| 4 | **Ceny v eurách** — pôvodné boli v korunách, preto sú prázdne | `js/config.js` → `pricing` | Nie – zatiaľ sa zobrazuje „Na vyžiadanie" |
-| 5 | **Vlastné fotky** — teraz sú tam 4 fotky zachránené z pôvodného webu (majú len 342 px, sú zrnité) | `assets/img/` | Nie, ale veľmi odporúčam |
-| 6 | Odkaz na Facebook / Google profil | `js/config.js` → `social` | Nie |
-| 7 | Merací kód Google Analytics | `js/config.js` → `analytics.ga4Id` | Nie |
+| 4 | **Vlastné fotky** — teraz sú tam 4 fotky zachránené z pôvodného webu (majú len 342 px, sú zrnité) | `assets/img/` | Nie, ale veľmi odporúčam |
+| 5 | Odkaz na Facebook / Google profil | `js/config.js` → `social` | Nie |
+| 6 | Merací kód Google Analytics | `js/config.js` → `analytics.ga4Id` | Nie |
 
 Miesta na doplnenie sú v `js/config.js` označené `⚠ DOPLNIŤ`.
+
+**Cenník web zámerne nemá.** Pôvodný web ho nemal a jediná cena, ktorá na ňom
+bola (`1750 Sk za 10 stretnutí` pri sobotných dopoludniach), je v korunách
+a dávno neplatí. Vymyslieť ceny nejde. Ak cenník chcete, dajte mi vedieť sumy
+a stránku doplním.
 
 **Ešte si prosím prejdite otváracie hodiny.** Pôvodný web ich uvádzal dvakrát
 a zakaždým inak — slovenská stránka `7:00 – 17:00` (predĺžene `6:00 – 19:00`),
@@ -39,21 +43,20 @@ v `js/config.js` → `business.hours`.
 
 ### Bežné údaje — všetko v jednom súbore
 
-Telefón, e-mail, adresa, otváracie hodiny, ceny, mapa, sociálne siete a merací
+Telefón, e-mail, adresa, otváracie hodiny, mapa, sociálne siete a merací
 kód sú **len na jednom mieste**: `js/config.js`. Keď ich tam zmeníte, prepíšu sa
 automaticky na všetkých stránkach.
 
-Príklad — doplnenie ceny celodennej opatery:
+Príklad — zmena telefónneho čísla:
 
 ```js
-pricing: {
-  celodenna: "od 350 € / mesiac",     // ← doplňte sem
-  ...
+business: {
+  phone:     "0908 41 40 91",     // ← ako to uvidí návštevník
+  phoneHref: "+421908414091",     // ← na čo sa vytočí po kliknutí
 }
 ```
 
-Kým je hodnota prázdna (`""`), na webe ostane text **„Na vyžiadanie"**. Web sa
-teda dá zverejniť aj bez cien a ceny doplniť neskôr.
+Zmeňte **obe** hodnoty — prvá sa zobrazuje, druhá sa vytáča.
 
 > **Dôležité:** po každej úprave v `js/` alebo `css/` spustite
 > `python3 .claude/skills/local-business-website/scripts/bump_assets_version.py`.
@@ -71,7 +74,6 @@ a prepíšte, čo treba. Sú to obyčajné súbory, netreba nič inštalovať.
 | `sluzby.html` | Opatera detí |
 | `kurzy.html` | Jazykové kurzy |
 | `o-nas.html` | O nás a filozofia |
-| `cennik.html` | Cenník |
 | `galeria.html` | Galéria |
 | `kontakt.html` | Kontakt |
 | `en.html` | Anglická stránka |
@@ -163,7 +165,6 @@ alebo `www`.
 - [ ] Doplnené PSČ prevádzky
 - [ ] Formulár na `kontakt.html` naozaj doručí správu (skúšobné odoslanie)
 - [ ] Otváracie hodiny sú aktuálne
-- [ ] Ceny sú doplnené, alebo vedome ostávajú „Na vyžiadanie"
 - [ ] Fotky sú vaše a máte súhlas rodičov na zverejnenie tvárí detí
 - [ ] Text na `ochrana-osobnych-udajov.html` prešiel právnou kontrolou
 - [ ] Doména smeruje na nový web
