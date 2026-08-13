@@ -184,9 +184,16 @@ js/main.js              napĺňanie data-mh, mobilné menu, tieň hlavičky, rev
 assets/img/             fotografie a zástupné SVG
 ```
 
+Farby sú prevzaté z **pôvodného loga BABYLAND** — oranžová `#FF9933` je
+vzorkovaná priamo z pôvodného nápisu, limetka `#99CC00` z trička postavičky
+a žltá `#FFD11A` zo slniečka na starej úvodnej stránke.
+
 Prefarbenie značky = zmena premenných v `:root` v `css/styles.css`.
-Pozor na kontrast: `--c-accent` (limetková) je **len dekoratívna**; pre text
-a tlačidlá s bielym popisom používajte `--c-accent-600`.
+Pozor na kontrast: `--c-accent` (oranžová) je **len dekoratívna** — biely text
+na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte
+`--c-accent-600`. Po každom prefarbení prehľadajte repozitár na staré hexy
+(`css`, `site.webmanifest`, `<meta name="theme-color">`, SVG v `assets/`)
+a spustite `audit_browser.js`.
 
 Kontrolné skripty (v `.claude/skills/local-business-website/scripts/`) —
 prehľadávajú aj podpriečinky, takže pokrývajú aj `en/`:

@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BABYLAND">
-  <g fill="#8CC63F">
+  <g fill="#FF9933">
     <circle cx="19" cy="20" r="8.5"/>
     <circle cx="45" cy="20" r="8.5"/>
     <circle cx="32" cy="35" r="17"/>
   </g>
-  <ellipse cx="32" cy="41" rx="8.5" ry="6.8" fill="#F1F8E4"/>
-  <g fill="#14453F">
+  <ellipse cx="32" cy="41" rx="8.5" ry="6.8" fill="#FFF2E0"/>
+  <g fill="#5A3312">
     <circle cx="25.5" cy="31.5" r="2.5"/>
     <circle cx="38.5" cy="31.5" r="2.5"/>
     <circle cx="32" cy="38" r="2.8"/>
