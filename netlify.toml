@@ -1,7 +1,115 @@
 [build]
   publish = "."
 
-# Vlastná stránka 404 (Netlify ju použije automaticky pre neexistujúce adresy)
+# ── Presmerovania zo starého webu ────────────────────────────────────────
+# Pôvodný web (2004) bol postavený na rámcoch a mal adresy končiace na .htm.
+# Kto má na ne záložku alebo klikne na starý výsledok vo vyhľadávači, dostal by
+# 404. Trvalé presmerovanie (301) pošle návštevníka na správnu stránku a Google
+# prepíše starú adresu na novú, takže sa nestratí ani pozícia vo vyhľadávaní.
+#
+# Adresy sú presne také, aké mal starý web, vrátane veľkých písmen — Netlify
+# rozlišuje malé a veľké. Názvy s medzerami sú uvedené v oboch podobách:
+# zakódovanej (%20), ako ich posiela prehliadač, aj s medzerou.
+#
+# ⚠ Tieto presmerovania fungujú len na Netlify. Na GitHub Pages sa
+# netlify.toml neuplatní a staré adresy zostanú nefunkčné.
+
+[[redirects]]
+  from = "/index.htm"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/Babyland.htm"
+  to = "/"
+  status = 301
+
+# rámec s menu — sám o sebe nemá obsah, patrí na úvod
+[[redirects]]
+  from = "/TOCFrame.htm"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/Babyland-ponuka.htm"
+  to = "/ponuka.html"
+  status = 301
+
+[[redirects]]
+  from = "/Kurzy%20AJ%20pre%20deti.htm"
+  to = "/kurzy.html"
+  status = 301
+
+[[redirects]]
+  from = "/Kurzy AJ pre deti.htm"
+  to = "/kurzy.html"
+  status = 301
+
+[[redirects]]
+  from = "/AktualnaPonuka.htm"
+  to = "/kurzy.html"
+  status = 301
+
+[[redirects]]
+  from = "/NasaFilozofia.htm"
+  to = "/filozofia.html"
+  status = 301
+
+[[redirects]]
+  from = "/FILOZOFIA.htm"
+  to = "/filozofia.html"
+  status = 301
+
+[[redirects]]
+  from = "/Hra.htm"
+  to = "/filozofia.html"
+  status = 301
+
+[[redirects]]
+  from = "/NaNavsteve.htm"
+  to = "/na-navsteve.html"
+  status = 301
+
+[[redirects]]
+  from = "/kontakt-contact.htm"
+  to = "/kontakt.html"
+  status = 301
+
+[[redirects]]
+  from = "/Kindergarten.htm"
+  to = "/en/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/The%20Kindergarten%20Program.htm"
+  to = "/en/program.html"
+  status = 301
+
+[[redirects]]
+  from = "/The Kindergarten Program.htm"
+  to = "/en/program.html"
+  status = 301
+
+[[redirects]]
+  from = "/Exclusive%20for%20babyland.htm"
+  to = "/en/exclusive.html"
+  status = 301
+
+[[redirects]]
+  from = "/Exclusive for babyland.htm"
+  to = "/en/exclusive.html"
+  status = 301
+
+# Čokoľvek iné s príponou .htm zo starého webu — radšej na úvod než na 404
+[[redirects]]
+  from = "/*.htm"
+  to = "/"
+  status = 301
+
+# Vlastná stránka 404 (Netlify ju použije automaticky pre neexistujúce adresy).
+# Musí zostať AŽ ZA presmerovaniami vyššie — Netlify berie prvé pravidlo, ktoré
+# sedí, takže keby bolo prvé, pohltilo by všetky staré adresy.
 [[redirects]]
   from = "/*"
   to = "/404.html"
