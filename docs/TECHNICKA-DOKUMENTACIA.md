@@ -247,9 +247,15 @@ nedostane.** Fotografie `.jpg` sa neverzujú zámerne — pri výmene im treba d
 nový názov súboru.
 
 `netlify.toml` zároveň posiela hlavičky `X-Content-Type-Options`,
-`X-Frame-Options`, `Referrer-Policy` a `Permissions-Policy`. Pri nasadení na
-GitHub Pages sa `netlify.toml` **neuplatní** — hlavičky ani chybová stránka
-nebudú fungovať tak, ako je popísané.
+`X-Frame-Options`, `Referrer-Policy` a `Permissions-Policy`, a obsahuje
+**trvalé presmerovania (301) zo všetkých 14 adries pôvodného webu** — starý web
+mal rámce a adresy končiace na `.htm`, takže bez nich by každá záložka a každý
+starý výsledok vo vyhľadávači skončil na chybovej stránke. Poradie je dôležité:
+zberné pravidlo na 404 musí zostať posledné, lebo Netlify berie prvé pravidlo,
+ktoré sedí.
+
+Pri nasadení na GitHub Pages sa `netlify.toml` **neuplatní** — hlavičky,
+presmerovania ani chybová stránka nebudú fungovať tak, ako je popísané.
 
 ---
 
@@ -257,10 +263,12 @@ nebudú fungovať tak, ako je popísané.
 
 | Skript | Čo kontroluje | Potrebuje |
 |---|---|---|
-| `scripts/kontrola.py` | slovenská typografia, poradie nadpisov, opakované odstavce, mŕtve selektory, názov živnosti mimo fakturačných údajov, `alt` a rozmery obrázkov | Python |
+| `scripts/kontrola.py` | slovenská typografia, poradie nadpisov, opakované odstavce, mŕtve selektory, názov živnosti mimo fakturačných údajov, `alt` a rozmery obrázkov, zhoda hlavičiek a pätičiek naprieč stránkami, zhoda JSON-LD a anglických hodín s `config.js` | Python |
+| `scripts/aktualizuj_sitemap.py` | prepíše `sitemap.xml`, dátumy z histórie repozitára | Python + git |
 | `.claude/…/audit_html.py` | odkazy, verzie `?v=`, štruktúra `<head>` | Python |
 | `.claude/…/audit_browser.js` | kontrast, dotykové plochy, pretečenie | Node + Chromium |
 | `.claude/…/verify_site.js` | chyby JS, chýbajúce súbory, snímky | Node + Chromium |
+| `scripts/stress_test.js` | pretečenie v troch scenároch (bežne, WCAG 1.4.12 rozostupy, dlhé slovo) na 6 šírkach + zameranie v otvorenom mobilnom menu | Node + Chromium |
 | `.claude/…/bump_assets_version.py` | prepočíta `?v=` | Python |
 
 Presné príkazy sú v [PRIRUCKA.md](PRIRUCKA.md), bod 10.
@@ -273,17 +281,17 @@ Poctivý zoznam toho, čo by sa dalo pokaziť alebo čo raz bude prekážať.
 
 **Hlavička a pätička sú v jedenástich kópiách.** Bez zostavovacieho kroku to
 inak nejde. Zmena jednej položky menu znamená jedenásť rovnakých úprav.
-Chráni to `scripts/kontrola.py` len čiastočne — nekontroluje, či sú hlavičky
-zhodné. Ak menu narastie, oplatí sa zvážiť malý generátor.
+`scripts/kontrola.py` porovnáva hlavičky aj pätičky medzi stránkami a nahlási,
+ktorý súbor sa vymyká — nezabráni to práci navyše, ale zabráni to tichému
+rozchodu. Ak menu narastie, oplatí sa zvážiť malý generátor.
 
 **Šírka hlavičky je na hrane.** Slovenská hlavička potrebuje 1149 px z 1180 px,
 ktoré má obsah k dispozícii. Dlhší telefón, ôsma položka menu alebo dlhší
 podnadpis značky ju pretlačia — vtedy treba premerať hranicu 1148 px.
 
-**Tri miesta s ručne udržiavanými údajmi** (anglické hodiny, JSON-LD,
-sitemap) sa môžu rozísť so `config.js`. Kontrolný skript ich neporovnáva.
-
-**`sitemap.xml` má statický `lastmod`.** Nikto ho neprepočítava.
+**Dve miesta s ručne udržiavanými údajmi** (anglické hodiny a JSON-LD) sa môžu
+rozísť so `config.js` — `scripts/kontrola.py` ich porovnáva a rozchod nahlási.
+Mapa stránok sa už neudržiava ručne, generuje ju `aktualizuj_sitemap.py`.
 
 **Fotografie sú z pôvodného webu, 342 px široké** a po zväčšení zrnité.
 Označené sú `width`/`height` podľa skutočnosti, takže layout neskáče, ale

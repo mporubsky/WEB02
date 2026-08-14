@@ -1,37 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="BABYLAND">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="BABYLAND — súkromná materská škola">
+  <!-- Náhľad pri zdieľaní odkazu (Facebook, Messenger, WhatsApp, LinkedIn).
+       Ladí so svetlou farebnosťou webu; z tohto SVG sa generuje og-image.png
+       cez scripts/render_raster.js. Text je zámerne veľký — v náhľade sa
+       obrázok zobrazuje malý. -->
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#A85400"/><stop offset="1" stop-color="#3F2309"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#FFF6E9"/><stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FF9933"/><stop offset=".46" stop-color="#FFC91A"/>
+      <stop offset=".58" stop-color="#FFC91A"/><stop offset="1" stop-color="#FF9930"/>
     </linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#g)"/>
-  <circle cx="1008" cy="113" r="312" fill="#FFD11A" opacity="0.16"/>
-  <rect x="957.7" y="279.7" width="43.7" height="43.7" rx="7.7" fill="#99CC00" opacity="0.45" transform="rotate(21 979.5 301.6)"/>
-  <circle cx="475.8" cy="40.1" r="24.5" fill="#99CC00" opacity="0.69"/>
-  <circle cx="375.8" cy="49.1" r="26.2" fill="#FFB226" opacity="0.62"/>
-  <circle cx="914.7" cy="516.4" r="17.7" fill="#FFB226" opacity="0.61"/>
-  <rect x="1054.0" y="32.8" width="29.9" height="29.9" rx="5.2" fill="#4FC3E8" opacity="0.65" transform="rotate(18 1068.9 47.8)"/>
-  <circle cx="1124.1" cy="544.5" r="20.5" fill="#99CC00" opacity="0.63"/>
-  <circle cx="337.3" cy="102.1" r="18.9" fill="#FFB226" opacity="0.39"/>
-  <rect x="483.8" y="101.7" width="30.5" height="30.5" rx="5.3" fill="#FFB226" opacity="0.74" transform="rotate(6 499.0 117.0)"/>
-  <circle cx="86.7" cy="438.9" r="16.0" fill="#FFD11A" opacity="0.58"/>
-  <circle cx="385.3" cy="75.1" r="21.1" fill="#FF9933" opacity="0.78"/>
-  <circle cx="1141.3" cy="224.2" r="16.5" fill="#99CC00" opacity="0.75"/>
-  <circle cx="1097.0" cy="319.0" r="17.9" fill="#99CC00" opacity="0.77"/>
-  <circle cx="925.3" cy="591.4" r="15.6" fill="#FFB226" opacity="0.63"/>
-  <rect x="857.7" y="33.3" width="21.5" height="21.5" rx="3.8" fill="#FF9933" opacity="0.78" transform="rotate(-2 868.5 44.1)"/>
-  <g opacity="0.14" fill="#ffffff">
-    <circle cx="984.0" cy="365.4" r="117.2"/>
-    <line x1="1117.5" y1="420.7" x2="1155.4" y2="436.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="1039.3" y1="498.9" x2="1055.0" y2="536.8" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="928.7" y1="498.9" x2="913.0" y2="536.8" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="850.5" y1="420.7" x2="812.6" y2="436.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="850.5" y1="310.1" x2="812.6" y2="294.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="928.7" y1="231.9" x2="913.0" y2="194.0" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="1039.3" y1="231.9" x2="1055.0" y2="194.0" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
-    <line x1="1117.5" y1="310.1" x2="1155.4" y2="294.4" stroke="#ffffff" stroke-width="43.0" stroke-linecap="round"/>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1010" cy="90" r="300" fill="#FFD11A" opacity="0.20"/>
+  <circle cx="120" cy="560" r="190" fill="#99CC00" opacity="0.13"/>
+
+  <!-- slniečko z loga -->
+  <g transform="translate(966 250) scale(3.05)">
+    <g stroke="#FF9933" stroke-width="7" stroke-linecap="round">
+      <line x1="0" y1="-34" x2="0" y2="-48"/><line x1="24" y1="-24" x2="34" y2="-34"/>
+      <line x1="34" y1="0" x2="48" y2="0"/><line x1="24" y1="24" x2="34" y2="34"/>
+      <line x1="0" y1="34" x2="0" y2="48"/><line x1="-24" y1="24" x2="-34" y2="34"/>
+      <line x1="-34" y1="0" x2="-48" y2="0"/><line x1="-24" y1="-24" x2="-34" y2="-34"/>
+    </g>
+    <circle cx="0" cy="0" r="27" fill="#FFD11A"/>
+    <circle cx="-9" cy="-5" r="3.2" fill="#5A3312"/><circle cx="9" cy="-5" r="3.2" fill="#5A3312"/>
+    <path d="M-11 6q11 10 22 0" fill="none" stroke="#5A3312" stroke-width="3.4" stroke-linecap="round"/>
   </g>
-  <text x="90" y="277" font-family="Arial,Helvetica,sans-serif" font-size="85" font-weight="800" fill="#ffffff" letter-spacing="1">BABYLAND</text>
-  <text x="90" y="353" font-family="Arial,Helvetica,sans-serif" font-size="37" font-weight="600" fill="#DCC9B6">Súkromná materská škola</text>
-  <text x="90" y="548" font-family="Arial,Helvetica,sans-serif" font-size="32" font-weight="700" fill="#FFC078">Gustáva Mallého 2, Bratislava</text>
+
+  <!-- nápis BABYLAND, rovnaká geometria ako assets/logo-babyland.svg -->
+  <g transform="translate(90 208) scale(0.86)" fill="url(#word)">
+    <path d="M0 0H27A25 22 0 0 1 27 44H0ZM10 10V34H27A15 12 0 0 0 27 10ZM0 40H36A20 22 0 0 1 36 84H0ZM10 45V74H26A20 14.5 0 0 0 26 45ZM90.5 0H101.5L130 84H119.5L111.36 60H80.64L72.5 84H62ZM96 14.74L84.04 50H107.96ZM137 0H164A25 22 0 0 1 164 44H137ZM147 10V34H164A15 12 0 0 0 164 10ZM137 40H173A20 22 0 0 1 173 84H137ZM147 45V74H163A20 14.5 0 0 0 163 45ZM199 0H209.5L232.5 38.74L255.5 0H266L237.5 48V84H227.5V48ZM274 0H284V74H320V84H274ZM353.5 0H364.5L393 84H382.5L374.36 60H343.64L335.5 84H325ZM359 14.74L347.04 50H370.96ZM400 0H410V84H400ZM448 0H458V84H448ZM400 0H410L458 84H448ZM475 0H503A32 42 0 0 1 503 84H475ZM485 10V74H503A22 32 0 0 0 503 10Z"/>
+  </g>
+
+  <text x="90" y="392" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="700" fill="#5A3312">Súkromná materská škola</text>
+  <text x="90" y="452" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="400" fill="#6B584A">Rodinná atmosféra, malé skupinky, cudzí jazyk formou hier</text>
+
+  <!-- štvorfarebný prúžok ako v hlavičke webu -->
+  <rect x="90" y="512" width="120" height="9" rx="4.5" fill="#FF9933"/>
+  <rect x="218" y="512" width="120" height="9" rx="4.5" fill="#FFD11A"/>
+  <rect x="346" y="512" width="120" height="9" rx="4.5" fill="#99CC00"/>
+  <rect x="474" y="512" width="120" height="9" rx="4.5" fill="#4FC3E8"/>
+
+  <text x="90" y="576" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="700" fill="#A85400">Gustáva Mallého 2, Bratislava</text>
 </svg>

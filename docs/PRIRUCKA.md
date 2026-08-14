@@ -102,7 +102,7 @@ Tieto treba prepísať **ručne**:
 |---|---|---|
 | Anglické stránky | otváracie hodiny (`Monday – Friday`) | `en/index.html`, `en/contact.html` |
 | Údaje pre Google | adresa, hodiny, súradnice v bloku `application/ld+json` | `index.html`, hore v `<head>` |
-| Mapa stránok | zoznam adries a dátum poslednej zmeny | `sitemap.xml` |
+| Mapa stránok | zoznam adries (dátumy sa dopĺňajú samy) | `scripts/aktualizuj_sitemap.py` |
 
 Prečo: anglické stránky by inak zobrazovali slovenské názvy dní, a blok pre
 Google číta vyhľadávač ešte predtým, než sa spustí akýkoľvek JavaScript.
@@ -203,17 +203,21 @@ Toto je najprácnejšia úprava, lebo menu je v každom súbore zvlášť.
    `<a href="kruzky.html" aria-current="page">Krúžky</a>`. To je to, čo
    podčiarkne aktuálnu položku.
 5. **Do pätičky** (blok „Stránky") pridajte to isté, opäť vo všetkých súboroch.
-6. **Do `sitemap.xml`** pridajte:
+6. **Do mapy stránok** doplňte riadok v `scripts/aktualizuj_sitemap.py`
+   do zoznamu `PAGES`:
 
-```xml
-<url>
-  <loc>https://www.babyland-centrum.sk/kruzky.html</loc>
-  <lastmod>2026-08-13</lastmod>
-  <priority>0.7</priority>
-</url>
+```python
+("kruzky.html", "0.7"),
 ```
 
-7. Spustite kontrolu (bod 10).
+   a spustite `python3 scripts/aktualizuj_sitemap.py`. Dátum poslednej zmeny
+   sa doplní sám z histórie repozitára.
+
+7. **Ak sa stránka volá inak než predtým**, pridajte do `netlify.toml`
+   presmerovanie zo starej adresy — inak dostane každý, kto má na ňu odkaz,
+   chybovú stránku. Vzory sú tam hore, stačí ich skopírovať.
+
+8. Spustite kontrolu (bod 10).
 
 > **Pozor na počet položiek.** Menu sa v jednom riadku zmestí do šírky, ktorú
 > má stránka k dispozícii. Po pridaní siedmej a ďalšej položky sa hranica,
@@ -338,7 +342,8 @@ Spustite tieto štyri príkazy v priečinku projektu. Prvé dva nepotrebujú ni�
 navyše, tretí a štvrtý potrebujú Node.js.
 
 ```bash
-# 1. pravidlá tohto webu (typografia, nadpisy, obrázky, mŕtve štýly)
+# 1. pravidlá tohto webu (typografia, nadpisy, obrázky, mŕtve štýly,
+#    zhoda hlavičiek a pätičiek, zhoda údajov s config.js)
 python3 scripts/kontrola.py
 
 # 2. odkazy, verzie súborov, štruktúra
@@ -352,7 +357,17 @@ node .claude/skills/local-business-website/scripts/audit_browser.js http://local
 
 # 5. chyby JavaScriptu, chýbajúce súbory + snímky obrazovky
 node .claude/skills/local-business-website/scripts/verify_site.js http://localhost:8000
+
+# 6. záťažový test rozloženia (server si spúšťa sám, netreba bod 3)
+node scripts/stress_test.js
 ```
+
+Šiesty skript sa web snaží **rozbiť**: prejde 11 stránok na šiestich šírkach
+v troch scenároch — bežne, so zväčšenými rozostupmi textu podľa WCAG 1.4.12
+a s dlhým nezalomiteľným slovom v nadpise — a nakoniec skontroluje, či sa pri
+otvorenom mobilnom menu nedá tabulátorom dostať za prekryv. Každý z tých
+scenárov našiel na tomto webe skutočnú chybu vtedy, keď ostatné kontroly
+hlásili zelenú.
 
 Všetko musí skončiť zeleným `✅`. Upozornenie „chýba cookie lišta" je
 v poriadku — web zámerne nepoužíva cookies ani meranie návštevnosti.
