@@ -22,6 +22,10 @@ stráži to, čo je vlastné tomuto projektu:
   5. názov živnosti („opatrovateľské centrum") mimo fakturačných údajov —
      prevádzka je súkromná materská škola
   6. obrázky bez alt, width alebo height
+  7. hlavička a pätička sa medzi stránkami rozišli — sú v každom súbore
+     zvlášť, takže úprava na jednom mieste sa ľahko zabudne inde
+  8. ručne písané údaje (blok pre Google, hodiny na anglických stránkach)
+     sa rozišli s js/config.js
 """
 import collections
 import html as htmlmod
@@ -158,6 +162,101 @@ def check_images():
                 errors.append(f"{path.name}: <img> bez width/height: {src}")
 
 
+def read_config():
+    """Vytiahne zo js/config.js hodnoty, ktoré sa dajú porovnať inde na webe.
+
+    config.js je JavaScript, nie JSON, takže sa nedá načítať priamo. Berú sa
+    len jednoduché reťazcové hodnoty; zložitejšie by sa museli vyhodnotiť.
+
+    :returns: slovník, napr. {"phone": "0908 41 40 91", "hours": "7:30 - 17:30"}
+    """
+    source = (ROOT / "js" / "config.js").read_text(encoding="utf-8")
+    values = {}
+    for key in ("phone", "phoneHref", "email"):
+        m = re.search(key + r'\s*:\s*"([^"]*)"', source)
+        if m:
+            values[key] = m.group(1)
+    m = re.search(r'showroom\s*:\s*\{[^}]*?full\s*:\s*"([^"]*)"', source, re.S)
+    if m:
+        values["showroom"] = m.group(1)
+    m = re.search(r'hours\s*:\s*\[\s*\{[^}]*?h\s*:\s*"([^"]*)"', source, re.S)
+    if m:
+        values["hours"] = m.group(1)
+    return values
+
+
+def normalize_block(html, is_en):
+    """Zjednotí hlavičku alebo pätičku, aby sa dali porovnať medzi stránkami.
+
+    Odstráni to, čo sa medzi stránkami líšiť SMIE: značku aktuálnej položky
+    menu, verziu súborov ?v=... a predponu ../ na anglických stránkach.
+
+    :param html:  blok HTML
+    :param is_en: či ide o stránku v priečinku en/
+    :returns:     text vhodný na porovnanie
+    """
+    html = re.sub(r'\s*aria-current="page"', "", html)
+    html = re.sub(r"\?v=[0-9a-f]+", "", html)
+    if is_en:
+        html = html.replace('"../', '"')
+    return re.sub(r"\s+", " ", html).strip()
+
+
+def check_shared_blocks():
+    """7. Hlavička a pätička sú v každom súbore zvlášť - nesmú sa rozísť."""
+    blocks = (("hlavicka", r'<header class="site-header">.*?</header>'),
+              ("paticka", r'<footer class="site-footer">.*?</footer>'))
+    groups = (("slovenskych", SK_PAGES, False), ("anglickych", EN_PAGES, True))
+    for label, pattern in blocks:
+        for group_label, pages, is_en in groups:
+            variants = {}
+            for path in pages:
+                m = re.search(pattern, path.read_text(encoding="utf-8"), re.S)
+                if not m:
+                    errors.append(f"{path.name}: chyba {label}")
+                    continue
+                variants.setdefault(normalize_block(m.group(0), is_en), []).append(path.name)
+            if len(variants) > 1:
+                ordered = sorted(variants.values(), key=len, reverse=True)
+                odd = ", ".join(name for group in ordered[1:] for name in group)
+                errors.append(f"{label} sa medzi {group_label} strankami lisi - "
+                              f"odlisne su: {odd} (zhodnych: {len(ordered[0])})")
+
+
+def check_data_in_sync():
+    """8. Ručne písané údaje sa nesmú rozísť s js/config.js."""
+    cfg = read_config()
+    if not cfg:
+        errors.append("js/config.js sa nepodarilo precitat")
+        return
+
+    index = (ROOT / "index.html").read_text(encoding="utf-8")
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', index, re.S)
+    if not m:
+        errors.append("index.html: chyba blok application/ld+json pre Google")
+    else:
+        block = m.group(1)
+        for key, want in (("telephone", cfg.get("phoneHref")), ("email", cfg.get("email"))):
+            found = re.search(r'"' + key + r'"\s*:\s*"([^"]*)"', block)
+            if want and found and found.group(1) != want:
+                errors.append(f"index.html: JSON-LD {key} je {found.group(1)}, "
+                              f"config.js ma {want}")
+        street = cfg.get("showroom", "").split(",")[0].strip()
+        if street and street not in block:
+            errors.append(f"index.html: JSON-LD nema adresu z config.js ({street})")
+        for t in re.findall(r"\d{1,2}:\d{2}", cfg.get("hours", "")):
+            if t not in block:
+                errors.append(f"index.html: JSON-LD nema cas {t} z config.js")
+
+    for path in EN_PAGES:
+        source = path.read_text(encoding="utf-8")
+        if "hours-row" not in source:
+            continue
+        for t in re.findall(r"\d{1,2}:\d{2}", cfg.get("hours", "")):
+            if t not in source:
+                errors.append(f"{path.name}: rucne pisane hodiny nemaju {t} z config.js")
+
+
 def main():
     check_sk_typography()
     check_heading_order()
@@ -165,6 +264,8 @@ def main():
     check_unused_css()
     check_identity()
     check_images()
+    check_shared_blocks()
+    check_data_in_sync()
 
     line = "=" * 72
     print(line)
