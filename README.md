@@ -81,9 +81,17 @@ už opravené podľa tabule na dverách a Google Maps.
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **„Program pre materské školy SR z roku 1999"** — ten dokument je dnes nahradený Štátnym vzdelávacím programom pre predprimárne vzdelávanie | `filozofia.html` | **Áno** |
-| 3 | **„Nová skupina — špeciálne pre deti do 2 rokov"** a **„Sobotné hravé dopoludnia"** — ponuka z roku 2004; ak už nebežia, zmažem ich | `kurzy.html` | **Áno** |
-| 4 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité; na mobile sa zväčšujú 3×) | `assets/img/` | Nie, ale odporúčam |
+| 2 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité; na mobile sa zväčšujú 3×) | `assets/img/` | Nie, ale odporúčam |
+
+**Už rozhodnuté a opravené:**
+
+- **Kurikulum.** Veta o „Programe pre materské školy SR z roku 1999" je
+  nahradená **Štátnym vzdelávacím programom pre predprimárne vzdelávanie**
+  (bez roku, aby text nezostarol pri ďalšej revízii dokumentu).
+- **Kurzy z roku 2004.** Skupina pre najmenších, sobotné hravé dopoludnia
+  aj nemčina stále bežia, takže na webe zostávajú. Pôvodný nadpis
+  „Nová skupina" je premenovaný na **„Skupina pre najmenších"** — po
+  dvadsiatich rokoch už nie je nová.
 
 **Otváracie hodiny.** Web uvádza jediné hodiny — `7:30 – 17:30`, prevádzkovú
 dobu z tabule na dverách. Pôvodný web mal `7:00 – 17:00` na slovenskej stránke
