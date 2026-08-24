@@ -50,15 +50,22 @@ errors = []
 warnings = []
 
 
-def page_text(path):
+def page_text(path, skip_lang=None):
     """Vráti viditeľný text stránky bez značiek, skriptov a obrázkov SVG.
 
-    :param path: cesta k HTML súboru
-    :returns:    text tak, ako ho zhruba vidí návštevník
+    :param path:      cesta k HTML súboru
+    :param skip_lang: keď je zadaný (napr. "en"), vynechá text v prvkoch
+                      označených týmto jazykom — v pätičke slovenských
+                      stránok sú odkazy na anglické stránky a tie sa podľa
+                      slovenských pravidiel posudzovať nemajú
+    :returns:         text tak, ako ho zhruba vidí návštevník
     """
     source = path.read_text(encoding="utf-8")
     body = source.split("<body", 1)[-1]
     body = re.sub(r"<(script|style|svg)\b.*?</\1>", " ", body, flags=re.S)
+    if skip_lang:
+        body = re.sub(r'<([a-z]+)[^>]*\blang="' + skip_lang + r'"[^>]*>.*?</\1>',
+                      " ", body, flags=re.S)
     return htmlmod.unescape(re.sub(r"<[^>]+>", " ", body))
 
 
@@ -71,7 +78,7 @@ def check_sk_typography():
         if "—" in source:
             errors.append(f"{name}: dlhá pomlčka U+2014 – v slovenčine patrí pomlčka U+2013")
 
-        text = page_text(path)
+        text = page_text(path, skip_lang="en")
         dangling = re.findall(r"(?:^|[\s(„])([" + SK_ONE_LETTER + r"]) [^\s]", text)
         if dangling:
             warnings.append(

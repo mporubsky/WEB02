@@ -44,7 +44,8 @@ const WIDTHS = [320, 360, 375, 390, 412, 768];
 const PAGES = [
   "index.html", "ponuka.html", "kurzy.html", "filozofia.html",
   "na-navsteve.html", "kontakt.html", "404.html",
-  "en/index.html", "en/program.html", "en/exclusive.html", "en/contact.html",
+  "en/index.html", "en/offer.html", "en/courses.html", "en/philosophy.html",
+  "en/visit.html", "en/contact.html",
 ];
 
 const SCENARIOS = [

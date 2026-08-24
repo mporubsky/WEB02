@@ -32,9 +32,11 @@ PAGES = [
     ("kontakt.html", "0.8"),
     ("na-navsteve.html", "0.7"),
     ("en/index.html", "0.6"),
-    ("en/program.html", "0.5"),
+    ("en/offer.html", "0.6"),
+    ("en/courses.html", "0.6"),
+    ("en/philosophy.html", "0.5"),
     ("en/contact.html", "0.5"),
-    ("en/exclusive.html", "0.4"),
+    ("en/visit.html", "0.4"),
 ]
 
 # 404 do mapy stránok nepatrí — nemá sa indexovať

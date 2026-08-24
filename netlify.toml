@@ -81,24 +81,39 @@
   to = "/en/index.html"
   status = 301
 
+# Anglická stránka o programe je dnes „Our philosophy" — je to ten istý
+# obsah ako v slovenskej „Naša filozofia".
 [[redirects]]
   from = "/The%20Kindergarten%20Program.htm"
-  to = "/en/program.html"
+  to = "/en/philosophy.html"
   status = 301
 
 [[redirects]]
   from = "/The Kindergarten Program.htm"
-  to = "/en/program.html"
+  to = "/en/philosophy.html"
   status = 301
 
+# „Exclusive for Babyland" (životopis maliara) sa zo stránok odstránil —
+# odkazy naň vedú na anglický úvod.
 [[redirects]]
   from = "/Exclusive%20for%20babyland.htm"
-  to = "/en/exclusive.html"
+  to = "/en/index.html"
   status = 301
 
 [[redirects]]
   from = "/Exclusive for babyland.htm"
-  to = "/en/exclusive.html"
+  to = "/en/index.html"
+  status = 301
+
+# Krátko existovali aj tieto adresy novej anglickej vetvy.
+[[redirects]]
+  from = "/en/program.html"
+  to = "/en/philosophy.html"
+  status = 301
+
+[[redirects]]
+  from = "/en/exclusive.html"
+  to = "/en/index.html"
   status = 301
 
 # Čokoľvek iné s príponou .htm zo starého webu — radšej na úvod než na 404

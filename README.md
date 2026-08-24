@@ -30,14 +30,25 @@ nemá ako pokaziť.
 | `kontakt.html` | Kontakt | `kontakt-contact.htm` |
 | `404.html` | Stránka pri chybnom odkaze | — |
 
-Anglická vetva má vlastnú navigáciu, rovnako ako pôvodný web:
+**Anglická verzia je preklad slovenskej — nie samostatný web.** Má rovnaké
+stránky, rovnaké menu aj rovnaké rozloženie; líši sa len jazyk. Generuje ju
+`scripts/build_site.py` z obsahu slovenských stránok, takže sa obe verzie
+nemôžu rozísť.
+
+Pôvodný web mal anglickú vetvu s vlastným, odlišným obsahom
+(*Kindergarten*, *The Kindergarten Program*, *Exclusive for Babyland*).
+Stránku **Exclusive for Babyland** — životopis maliara Roberta Tollasta —
+sme na vaše želanie odstránili úplne. Zvyšné anglické texty nahradil preklad
+slovenských, aby si obe verzie odpovedali:
 
 | Súbor | Stránka | Pôvodný zdroj |
 |---|---|---|
-| `en/index.html` | Kindergarten | `Kindergarten.htm` |
-| `en/program.html` | The Kindergarten Program | `The Kindergarten Program.htm` |
-| `en/exclusive.html` | Exclusive for Babyland | `Exclusive for babyland.htm` |
-| `en/contact.html` | Contact | `kontakt-contact.htm` |
+| `en/index.html` | Home | preklad `index.html` |
+| `en/offer.html` | What we offer | preklad `ponuka.html` |
+| `en/courses.html` | English courses | preklad `kurzy.html` |
+| `en/philosophy.html` | Our philosophy | preklad `filozofia.html` |
+| `en/visit.html` | A visit with us | preklad `na-navsteve.html` |
+| `en/contact.html` | Contact | preklad `kontakt.html` |
 
 Medzi jazykmi sa prepína odkazom **English** / **Slovensky** v menu.
 
@@ -208,7 +219,7 @@ Statické HTML + jeden CSS súbor + dva súbory vanilla JS. Žiadne závislosti,
 
 ```
 index.html …            slovenské stránky
-en/                     anglická vetva (vlastná navigácia)
+en/                     anglická verzia (preklad, generuje build_site.py)
 css/styles.css          celý dizajn; značkové farby sú v :root na začiatku
 js/config.js            údaje centra (jediný súbor na bežné zmeny)
 js/main.js              doplnenie údajov, hodiny, rok, mobilné menu

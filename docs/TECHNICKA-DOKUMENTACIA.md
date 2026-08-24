@@ -16,7 +16,7 @@ z disku dvojklikom.
 
 | | |
 |---|---|
-| Stránok | 11 (7 slovenských vrátane 404, 4 anglické) |
+| Stránok | 13 (7 slovenských vrátane 404, 6 anglických) |
 | CSS | `css/styles.css`, ~620 riadkov, 18 očíslovaných sekcií |
 | JS | `js/main.js` ~276 riadkov, `js/config.js` ~65 riadkov |
 | Obrázky | 4 fotografie JPG, 6 vektorov SVG, 4 ikony PNG |
@@ -38,8 +38,9 @@ V staršom prehliadači bude čitateľný, ale bez niektorých vylepšení.
 ├── na-navsteve.html        galéria štyroch fotiek
 ├── kontakt.html            kontakt, hodiny, fakturačné údaje
 ├── 404.html                chybová stránka (noindex)
-├── en/                     anglická vetva s vlastným menu
-│   ├── index.html · program.html · exclusive.html · contact.html
+├── en/                     anglická verzia — preklad slovenskej, generovaná
+│   ├── index.html · offer.html · courses.html
+│   └── philosophy.html · visit.html · contact.html
 ├── css/styles.css          jediný štýlový súbor
 ├── js/
 │   ├── config.js           ⭐ údaje o prevádzke — jediné miesto na úpravu
@@ -62,6 +63,38 @@ V staršom prehliadači bude čitateľný, ale bez niektorých vylepšení.
 
 `assets/img/og-image.svg` sa na webe nepoužíva — je to predloha, z ktorej
 `render_raster.js` vyrába `og-image.png`. Nemazať.
+
+---
+
+## 2b. Ako vzniká anglická verzia
+
+Anglická verzia **nie je samostatný web**. `scripts/build_site.py` vezme obsah
+`<main>` slovenskej stránky, prepíše v ňom texty podľa prekladovej mapy
+`TRANSLATE`, prepíše odkazy a cesty k súborom a výsledok zapíše do `en/`.
+Štruktúra HTML pritom zostáva nedotknutá — preto obe verzie vyzerajú rovnako
+a nemôžu sa rozísť.
+
+```
+ponuka.html  ──(<main>)──►  TRANSLATE  ──►  en/offer.html
+    │                                            │
+    └────── head + header + footer ──────────────┘
+              (generuje ten istý skript)
+```
+
+Tri veci, ktoré skript rieši a stoja za zapamätanie:
+
+**Preklad sa uplatňuje od najdlhšieho reťazca po najkratší.** „Kde nás
+nájdete" je začiatkom vety „Kde nás nájdete, kedy máme otvorené…"; keby sa
+uplatnil skôr, rozbil by ju. Vďaka zoradeniu podľa dĺžky nemusí nikto strážiť
+poradie v mape.
+
+**Na zalomení riadkov nezáleží.** Kľúč sa hľadá cez `\s+`, takže presunutie
+jedného slova na ďalší riadok preklad nerozbije.
+
+**Zvyšky sa hlásia.** Skript po preklade prejde anglický výstup a nájde slová
+s písmenami, ktoré angličtina nepozná. Vlastné mená (Gustáva Mallého,
+Kamenská…) preskočí. Keď niečo ostane nepreložené, skript to vypíše a skončí
+chybou — nedá sa teda ticho zabudnúť na dvojicu v mape.
 
 ---
 
@@ -180,7 +213,7 @@ a inokedy je v obale.
 
 | Hranica | Čo sa mení |
 |---|---|
-| 1148 px | menu → hamburger *(premerané: slovenská hlavička potrebuje 1149 px)* |
+| 1161 px | menu → hamburger *(premerané: slovenská hlavička potrebuje 1149 px, anglická 1162 px — rozhoduje dlhšia)* |
 | 900 px | trojstĺpcová mriežka a galéria → dva stĺpce |
 | 880 px | pätička → dva stĺpce |
 | 860 px | hero → jeden stĺpec |
@@ -265,6 +298,7 @@ presmerovania ani chybová stránka nebudú fungovať tak, ako je popísané.
 |---|---|---|
 | `scripts/kontrola.py` | slovenská typografia, poradie nadpisov, opakované odstavce, mŕtve selektory, názov živnosti mimo fakturačných údajov, `alt` a rozmery obrázkov, zhoda hlavičiek a pätičiek naprieč stránkami, zhoda JSON-LD a anglických hodín s `config.js` | Python |
 | `scripts/aktualizuj_sitemap.py` | prepíše `sitemap.xml`, dátumy z histórie repozitára | Python + git |
+| `scripts/build_site.py` | zostaví všetkých 13 stránok; anglické sú preklad slovenských | Python |
 | `.claude/…/audit_html.py` | odkazy, verzie `?v=`, štruktúra `<head>` | Python |
 | `.claude/…/audit_browser.js` | kontrast, dotykové plochy, pretečenie | Node + Chromium |
 | `.claude/…/verify_site.js` | chyby JS, chýbajúce súbory, snímky | Node + Chromium |
@@ -279,15 +313,17 @@ Presné príkazy sú v [PRIRUCKA.md](PRIRUCKA.md), bod 10.
 
 Poctivý zoznam toho, čo by sa dalo pokaziť alebo čo raz bude prekážať.
 
-**Hlavička a pätička sú v jedenástich kópiách.** Bez zostavovacieho kroku to
-inak nejde. Zmena jednej položky menu znamená jedenásť rovnakých úprav.
-`scripts/kontrola.py` porovnáva hlavičky aj pätičky medzi stránkami a nahlási,
-ktorý súbor sa vymyká — nezabráni to práci navyše, ale zabráni to tichému
-rozchodu. Ak menu narastie, oplatí sa zvážiť malý generátor.
+**Hlavička a pätička sú v trinástich kópiách** — ale nepíšu sa ručne.
+Generuje ich `scripts/build_site.py`, takže zmena položky menu je jedna úprava
+na jednom mieste. `scripts/kontrola.py` navyše porovnáva výsledné hlavičky
+a pätičky medzi stránkami a nahlási, ktorý súbor sa vymyká — to zachytí aj
+prípad, keď niekto upraví vygenerovaný súbor ručne a zabudne skript spustiť.
 
-**Šírka hlavičky je na hrane.** Slovenská hlavička potrebuje 1149 px z 1180 px,
-ktoré má obsah k dispozícii. Dlhší telefón, ôsma položka menu alebo dlhší
-podnadpis značky ju pretlačia — vtedy treba premerať hranicu 1148 px.
+**Šírka hlavičky je na hrane.** Anglická hlavička potrebuje 1162 px z 1180 px,
+ktoré má obsah k dispozícii (slovenská 1149 px). Dlhší telefón, ôsma položka
+menu alebo dlhší názov položky ju pretlačia — vtedy treba premerať hranicu
+1161 px znova, a to v OBOCH jazykoch. Postup je popísaný v komentári pri tom
+media query.
 
 **Dve miesta s ručne udržiavanými údajmi** (anglické hodiny a JSON-LD) sa môžu
 rozísť so `config.js` — `scripts/kontrola.py` ich porovnáva a rozchod nahlási.

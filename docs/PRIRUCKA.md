@@ -100,7 +100,7 @@ Tieto treba prepísať **ručne**:
 
 | Kde | Čo tam je | Súbor |
 |---|---|---|
-| Anglické stránky | otváracie hodiny (`Monday – Friday`) | `en/index.html`, `en/contact.html` |
+| Anglické stránky | otváracie hodiny (`Monday – Friday`) | prekladová mapa v `scripts/build_site.py` |
 | Údaje pre Google | adresa, hodiny, súradnice v bloku `application/ld+json` | `index.html`, hore v `<head>` |
 | Mapa stránok | zoznam adries (dátumy sa dopĺňajú samy) | `scripts/aktualizuj_sitemap.py` |
 
@@ -135,14 +135,34 @@ Texty sú priamo v HTML súboroch. Ktorý súbor je ktorá stránka:
    toto nechajte                 toto nechajte
 ```
 
-4. Uložte. Súbor otvorte dvojklikom a pozrite sa, či je všetko v poriadku.
+4. Uložte a spustite:
 
-> Pri texte v `<title>` a v `<meta name="description">` hore v súbore pozor:
-> práve tie sa zobrazujú v Google. Titulok držte do 60 znakov, popis do 160.
+```bash
+python3 scripts/build_site.py
+python3 .claude/skills/local-business-website/scripts/bump_assets_version.py
+```
 
-**Hlavička a pätička sú v každom súbore zvlášť.** Keď meníte niečo v nich
-(napríklad položku menu), musíte to zmeniť **rovnako vo všetkých jedenástich
-súboroch** — inak sa stránky začnú od seba líšiť.
+5. Súbor otvorte dvojklikom a pozrite sa, či je všetko v poriadku.
+
+> **Prečo ten skript.** Hlavička, pätička aj celá anglická verzia sa
+> **generujú**. Skript ich po vašej úprave prepíše, aby všetkých trinásť
+> stránok zostalo rovnakých. Bez neho by sa slovenská a anglická verzia
+> rozišli.
+
+> Pri texte v `<title>` a v `<meta name="description">` pozor: práve tie sa
+> zobrazujú v Google. **Nie sú v HTML súbore** — sú v `scripts/build_site.py`
+> v tabuľke `META`. Titulok držte do 60 znakov, popis do 160.
+
+### ⚠ Čo NEUPRAVOVAŤ ručne
+
+| Čo | Kde to zmeniť namiesto toho |
+|---|---|
+| stránky v priečinku `en/` | prekladová mapa `TRANSLATE` v `scripts/build_site.py` |
+| menu, hlavička, pätička | `scripts/build_site.py` |
+| titulky a popisy pre Google | tabuľka `META` v `scripts/build_site.py` |
+
+Tieto súbory a časti sa pri každom spustení skriptu prepíšu, takže by sa
+vaša úprava stratila.
 
 ---
 
@@ -294,18 +314,38 @@ node .claude/skills/local-business-website/scripts/audit_browser.js http://local
 
 ## 8. Úprava anglickej verzie
 
-Anglické stránky sú v priečinku `en/` a majú **vlastné menu** (Kindergarten,
-The Kindergarten Program, Exclusive for Babyland, Contact) — presne ako
-pôvodný web.
+**Anglické súbory neupravujte.** Sú to preklady slovenských stránok a pri
+každom spustení `build_site.py` sa prepíšu.
 
-Čo platí navyše:
+Anglická verzia má rovnaké stránky, rovnaké menu aj rovnaké rozloženie ako
+slovenská — líši sa len jazykom. Vzniká tak, že skript vezme obsah slovenskej
+stránky a prepíše v ňom texty podľa prekladovej mapy.
 
-- otváracie hodiny sú napísané priamo v HTML, nie z `config.js` (bod 2);
-- v anglickom texte sa **používa dlhá pomlčka „—"** a **nedávajú sa
-  nezalomiteľné medzery** — je to opačne než v slovenčine;
-- slovenský text v anglickej stránke (obchodné meno, položky menu „Úvod",
-  „Ponuka") musí mať `lang="sk"`, inak ho čítačka obrazovky prečíta
-  s anglickou výslovnosťou.
+**Postup pri zmene anglického textu**
+
+1. Otvorte `scripts/build_site.py` a nájdite zoznam `TRANSLATE`.
+2. Nájdite dvojicu so slovenským textom a prepíšte anglickú polovicu:
+
+```python
+("Krásny deň!", "Have a lovely day!"),
+   ↑ slovenský originál   ↑ toto meníte
+```
+
+3. Spustite `python3 scripts/build_site.py`.
+
+**Keď meníte slovenský text**, ktorý má v mape svoju dvojicu, musíte v nej
+prepísať aj slovenskú polovicu — inak sa preklad prestane uplatňovať. Skript
+vás na to upozorní: na konci vypíše, ktoré slová v anglickej verzii ostali
+slovenské, a skončí chybou.
+
+Čo skript rieši sám:
+
+- otváracie hodiny na anglických stránkach sa nevypĺňajú z `config.js`
+  (sú v ňom slovenské názvy dní) — ostávajú napísané v HTML;
+- v angličtine sa **používa dlhá pomlčka „—"** a **nedávajú sa nezalomiteľné
+  medzery** — je to opačne než v slovenčine;
+- slovenský text v anglickej stránke (obchodné meno, položky menu) dostane
+  `lang="sk"`, inak ho čítačka obrazovky prečíta s anglickou výslovnosťou.
 
 ---
 
@@ -342,6 +382,9 @@ Spustite tieto štyri príkazy v priečinku projektu. Prvé dva nepotrebujú ni�
 navyše, tretí a štvrtý potrebujú Node.js.
 
 ```bash
+# 0. prestavanie stránok (po každej úprave textu alebo prekladu)
+python3 scripts/build_site.py
+
 # 1. pravidlá tohto webu (typografia, nadpisy, obrázky, mŕtve štýly,
 #    zhoda hlavičiek a pätičiek, zhoda údajov s config.js)
 python3 scripts/kontrola.py
