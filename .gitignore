@@ -9,7 +9,6 @@ desktop.ini
 
 # Závislosti nástrojov (samotný web žiadne nepotrebuje)
 node_modules/
-*.whl
 __pycache__/
 *.pyc
 .venv/
