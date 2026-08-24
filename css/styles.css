@@ -244,10 +244,17 @@ p:last-child { margin-bottom: 0; }
    care" — pri väčšom písme sa zalomilo na dva riadky a slovenská hlavička
    potom vyzerala úplne inak než anglická. Veľkosť a preloženie sú zvolené
    tak, aby bol slovenský text zhruba taký široký ako nápis nad ním; anglický
-   je kratší, čo je pri podnadpise v poriadku. */
+   je kratší, čo je pri podnadpise v poriadku.
+
+   Odsadenie zhora je nutné: viewBox nápisu (0 0 535 84) je orezaný presne na
+   písmená, takže obrázok pod nimi nemá ani pixel prázdna, a „line-height: 1.05"
+   na stĺpci nedá popisu takmer žiadny nábeh. Bez tohto pravidla sa veľké
+   písmená popisu dotýkali účiaria nápisu. Platí pre hlavičku aj pätičku —
+   obe používajú ten istý blok. */
 .brand__tag {
   font-size: .62rem; font-weight: 600; letter-spacing: .12em;
   text-transform: uppercase; color: var(--c-muted); white-space: nowrap;
+  margin-top: .45em;
 }
 
 /* Na najužších telefónoch sa značka v hlavičke zmenší a popis sa vynechá —

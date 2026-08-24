@@ -26,6 +26,8 @@ stráži to, čo je vlastné tomuto projektu:
      zvlášť, takže úprava na jednom mieste sa ľahko zabudne inde
   8. ručne písané údaje (blok pre Google, hodiny na anglických stránkach)
      sa rozišli s js/config.js
+  9. rozbitý komentár v CSS — prehliadač po ňom ticho zahodí celé pravidlo
+     a v prehliadači to vyzerá, akoby ste ho nikdy nenapísali
 """
 import collections
 import html as htmlmod
@@ -257,6 +259,33 @@ def check_data_in_sync():
                 errors.append(f"{path.name}: rucne pisane hodiny nemaju {t} z config.js")
 
 
+def check_css_comments():
+    """9. Komentáre v CSS musia byť správne uzavreté.
+
+    Keď sa pri úprave komentára stratí alebo zdvojí ``*/``, prehliadač berie
+    text komentára ako CSS, narazí na chybu a **zahodí celé nasledujúce
+    pravidlo**. Nič sa nezobrazí ako chyba — pravidlo sa jednoducho neuplatní.
+    Presne takto raz zmizlo celé ``.brand__tag``.
+    """
+    css = (ROOT / "css" / "styles.css").read_text(encoding="utf-8")
+
+    opened, closed = css.count("/*"), css.count("*/")
+    if opened != closed:
+        errors.append(f"styles.css: {opened}x /* ale {closed}x */ - "
+                      f"niektory komentar nie je uzavrety")
+        return
+
+    # text mimo komentárov, ktorý nezačína ako selektor, deklarácia ani @pravidlo
+    outside = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    for number, line in enumerate(outside.splitlines(), 1):
+        text = line.strip()
+        if not text or text in ("{", "}"):
+            continue
+        if not re.match(r"^[@.#:*\[a-zA-Z0-9>~+&\"'-]", text):
+            errors.append(f"styles.css: mimo komentara je text, ktory nie je CSS - "
+                          f"{text[:60]}")
+
+
 def main():
     check_sk_typography()
     check_heading_order()
@@ -266,6 +295,7 @@ def main():
     check_images()
     check_shared_blocks()
     check_data_in_sync()
+    check_css_comments()
 
     line = "=" * 72
     print(line)
