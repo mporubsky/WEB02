@@ -213,7 +213,7 @@ a inokedy je v obale.
 
 | Hranica | Čo sa mení |
 |---|---|
-| 1161 px | menu → hamburger *(premerané: slovenská hlavička potrebuje 1149 px, anglická 1162 px — rozhoduje dlhšia)* |
+| 1161 px | menu → hamburger *(premerané: slovenská hlavička sa zmestí od 1098 px, anglická od 1141 px — rozhoduje dlhšia)* |
 | 900 px | trojstĺpcová mriežka a galéria → dva stĺpce |
 | 880 px | pätička → dva stĺpce |
 | 860 px | hero → jeden stĺpec |
@@ -223,12 +223,13 @@ a inokedy je v obale.
 | 380 px | menšia značka, podnadpis značky sa skryje |
 
 Hranica 1161 px **nie je okrúhle číslo náhodou**. Hlavička (značka + sedem
-položiek menu + telefón) potrebuje v jednom riadku 1149 px po slovensky
-a 1162 px po anglicky — rozhoduje teda tá dlhšia, anglická.
-Pri nižšej hranici by sa v pásme medzi ňou a 1162 px hlavička nezmestila
-a stránka by sa dala posúvať do strany — týkalo by sa to bežných rozlíšení
-1024 a 1152 px. **Po zmene počtu položiek menu alebo veľkosti značky treba
-hranicu premerať znova.**
+položiek menu + telefón) sa v jednom riadku zmestí od 1098 px po slovensky
+a od 1141 px po anglicky — rozhoduje teda tá dlhšia, anglická. Hamburger sa
+zapína o 20 px vyššie, než je nutné; tá rezerva je zámerná, lebo šírka textu
+sa medzi systémami a písmami líši o jednotky percent a bez nej by sa hlavička
+na cudzom počítači nemusela zmestiť. **Po zmene počtu položiek menu, ich
+názvov alebo veľkosti značky treba hranicu premerať znova** — postup je
+v komentári pri tom media query a `scripts/stress_test.js` rozdiel ohlási.
 
 ### Dve pravidlá, ktoré vyzerajú zvláštne, ale majú dôvod
 
@@ -320,11 +321,18 @@ na jednom mieste. `scripts/kontrola.py` navyše porovnáva výsledné hlavičky
 a pätičky medzi stránkami a nahlási, ktorý súbor sa vymyká — to zachytí aj
 prípad, keď niekto upraví vygenerovaný súbor ručne a zabudne skript spustiť.
 
-**Šírka hlavičky je na hrane.** Anglická hlavička potrebuje 1162 px z 1180 px,
-ktoré má obsah k dispozícii (slovenská 1149 px). Dlhší telefón, ôsma položka
-menu alebo dlhší názov položky ju pretlačia — vtedy treba premerať hranicu
-1161 px znova, a to v OBOCH jazykoch. Postup je popísaný v komentári pri tom
-media query.
+**Šírka hlavičky je stále tesná.** Anglická hlavička potrebuje 1141 px
+z 1180 px, ktoré má obsah k dispozícii (slovenská 1098 px). Dlhší telefón,
+ôsma položka menu alebo dlhší názov položky ju pretlačia — vtedy treba
+premerať hranicu 1161 px znova, a to v OBOCH jazykoch. Postup je popísaný
+v komentári pri tom media query.
+
+Keď sa hlavička do rámca obsahu nezmestí, **nerozbije sa nápadne** — flexbox
+namiesto toho stlačí telefón, takže sa jeho text oreže a v každom jazyku
+skončí inde. Presne to sa raz stalo a žiadna z kontrol to nezachytila, lebo
+stránka nepretekala do strany. Preto `scripts/stress_test.js` odvtedy meria
+značku, začiatok menu aj telefón v oboch jazykoch a porovnáva ich; rozdiel
+väčší než pol pixela nahlási ako chybu.
 
 **Dve miesta s ručne udržiavanými údajmi** (anglické hodiny a JSON-LD) sa môžu
 rozísť so `config.js` — `scripts/kontrola.py` ich porovnáva a rozchod nahlási.

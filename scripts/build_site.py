@@ -451,6 +451,10 @@ def footer(lang):
         <p>{w['about']}</p>
       </div>
 
+      <!-- Dva stĺpce odkazov vedľa seba: tie isté stránky v oboch jazykoch.
+           Nadpis stĺpca je slovo „stránky" v jazyku odkazov POD ním, nie
+           v jazyku stránky — inak by nad slovenskými odkazmi v anglickej
+           verzii stálo „English", čo je presne naopak, než kam vedú. -->
       <div>
         <h2>{w['pages']}</h2>
         <ul class="footer-links">
@@ -459,7 +463,7 @@ def footer(lang):
       </div>
 
       <div>
-        <h2>{other['other_label'] if lang == 'en' else 'English'}</h2>
+        <h2 lang="{w['other']}">{other['pages']}</h2>
         <ul class="footer-links">
 {chr(10).join(cross)}
         </ul>

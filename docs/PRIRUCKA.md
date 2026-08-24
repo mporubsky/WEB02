@@ -263,10 +263,12 @@ python3 scripts/build_site.py
 9. Spustite kontrolu (bod 10).
 
 > **⚠ Po siedmej položke menu premerajte hranicu hamburgeru.** Menu sa musí
-> zmestiť do jedného riadka; dnes na to treba 1149 px po slovensky a 1162 px
-> po anglicky. Ôsma položka to pretlačí a stránka sa začne dať posúvať do
-> strany na bežných rozlíšeniach. Postup merania je popísaný v komentári
-> v `css/styles.css` pri `@media (max-width: 1161px)`.
+> zmestiť do jedného riadka; dnes sa hlavička zmestí od 1098 px po slovensky
+> a od 1141 px po anglicky, a hamburger sa zapína pri 1161 px. Ôsma položka to
+> pretlačí — a nepozná sa to na prvý pohľad, lebo sa najprv stlačí telefón
+> v hlavičke a oreže sa mu text. Spustite `node scripts/stress_test.js`, ktorý
+> obe jazykové verzie porovná a rozdiel nahlási. Postup merania hranice je
+> popísaný v komentári v `css/styles.css` pri `@media (max-width: 1161px)`.
 
 ---
 

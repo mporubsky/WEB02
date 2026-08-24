@@ -233,24 +233,52 @@ p:last-child { margin-bottom: 0; }
 }
 .site-header::after { position: absolute; left: 0; right: 0; bottom: -5px; }
 
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: var(--header-h); }
-.header-actions { display: flex; align-items: center; gap: .75rem; }
+/* Menu sa drží značky, telefón sa tlačí k pravému okraju a všetko voľné
+   miesto zostáva medzi nimi. Predtým tu bolo „justify-content: space-between",
+   ktoré voľné miesto rozdelilo do oboch medzier — a keďže anglické menu je
+   o 43 px širšie, začínalo v každom jazyku inde a pri prepnutí jazyka menu
+   viditeľne poskočilo. Takto je začiatok menu aj poloha telefónu v oboch
+   jazykoch rovnaká a rozdiel v dĺžke názvov pohltí medzera pred telefónom. */
+.header-inner { display: flex; align-items: center; gap: 1rem; min-height: var(--header-h); }
+.header-actions { display: flex; align-items: center; gap: .75rem; margin-left: auto; }
 
 .brand { display: inline-flex; align-items: center; gap: .6rem; color: var(--c-dark); font-weight: 800; }
 .brand:hover { color: var(--c-dark); }
 .brand__mark { width: 40px; height: 40px; flex: none; }
-.brand__text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.05; }
+/* Značka musí byť v slovenskej aj anglickej verzii ROVNAKO VEĽKÁ a rovnako
+   široká — pri prepnutí jazyka sa nesmie „preskočiť". Preto má stĺpec
+   s nápisom pevnú šírku spoločnú pre oba jazyky namiesto toho, aby si ju
+   dopočítal z dĺžky popisu, ktorý je v každom jazyku iný.
+
+   --brand-text-w je najmenšia šírka, do ktorej sa vojde dlhší z oboch
+   popisov, teda slovenské „SÚKROMNÁ MATERSKÁ ŠKOLA" (181,3 px pri veľkosti
+   a preložení nastavenom nižšie). Ak sa popis alebo písmo zmení, číslo treba
+   prepočítať — `scripts/stress_test.js` porovnáva obe jazykové verzie a ohlási
+   sa, keď popis z rámca vytečie alebo keď sa hlavičky rozídu. */
+:root { --brand-text-w: 182px; }
+.brand__text {
+  display: flex; flex-direction: column; align-items: flex-start;
+  line-height: 1.05; width: var(--brand-text-w);
+}
 /* Nápis BABYLAND je vektor prekreslený z pôvodného loga (assets/logo-babyland.svg).
-   Šírka sa dopočíta z pomeru strán, aby sa nedeformoval. Bez „align-items:
-   flex-start" vyššie by sa obrázok roztiahol na šírku celého stĺpca a nápis
-   by sa v ňom vycentroval — teda odsadil od podnadpisu pod ním. */
-.brand__word { height: 26px; width: auto; }
+   Šírka sa dopočíta z pomeru strán (535 : 84), aby sa nedeformoval.
+
+   „max-width: none" ruší globálne pravidlo `img { max-width: 100% }` a je tu
+   kľúčové: bez neho sa nápis zmestí len do šírky stĺpca, a keďže tú určoval
+   kratší anglický popis, anglické BABYLAND bolo 147,8 px široké oproti
+   slovenským 165,6 px — teda o desatinu menšie. „flex: none" bráni tomu, aby
+   ho stĺpec stlačil, keď je miesta málo.
+
+   Bez „align-items: flex-start" na stĺpci vyššie by sa obrázok roztiahol na
+   šírku celého stĺpca a nápis by sa v ňom vycentroval — teda odsadil od
+   podnadpisu pod ním. */
+.brand__word { height: 26px; width: auto; max-width: none; flex: none; }
 /* Popis pod nápisom musí zostať na JEDNOM riadku v oboch jazykoch. Slovenské
-   „Opatrovateľské centrum" je o polovicu dlhšie než anglické „Private day
-   care" — pri väčšom písme sa zalomilo na dva riadky a slovenská hlavička
-   potom vyzerala úplne inak než anglická. Veľkosť a preloženie sú zvolené
-   tak, aby bol slovenský text zhruba taký široký ako nápis nad ním; anglický
-   je kratší, čo je pri podnadpise v poriadku.
+   „Súkromná materská škola" je o tretinu dlhšie než anglické „Private
+   kindergarten" — pri väčšom písme sa zalomilo na dva riadky a slovenská
+   hlavička potom vyzerala úplne inak než anglická. Veľkosť a preloženie sú
+   zvolené tak, aby sa slovenský popis vošiel do --brand-text-w; anglický je
+   kratší, čo je pri podnadpise v poriadku a na rozloženie už nemá vplyv.
 
    Odsadenie zhora je nutné: viewBox nápisu (0 0 535 84) je orezaný presne na
    písmená, takže obrázok pod nimi nemá ani pixel prázdna, a „line-height: 1.05"
@@ -264,12 +292,15 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* Na najužších telefónoch sa značka v hlavičke zmenší a popis sa vynechá —
-   inak by sa do riadku nezmestil telefón ani hamburger. V pätičke je miesta
-   dosť, preto sú tieto pravidlá viazané na .site-header. */
+   inak by sa do riadku nezmestil telefón ani hamburger. Keď popis zmizne,
+   musí padnúť aj pevná šírka stĺpca, inak by za menším nápisom zostalo
+   60 px prázdna práve tam, kde je ho najmenej. V pätičke je miesta dosť,
+   preto sú tieto pravidlá viazané na .site-header. */
 @media (max-width: 380px) {
   .site-header .brand__mark { width: 32px; height: 32px; }
   .site-header .brand__word { height: 19px; }
   .site-header .brand__tag { display: none; }
+  .site-header .brand__text { width: auto; }
 }
 
 .header-phone { display: inline-flex; align-items: center; gap: .45rem; font-weight: 700; color: var(--c-dark); white-space: nowrap; }
@@ -295,13 +326,27 @@ p:last-child { margin-bottom: 0; }
   }
 }
 
-.main-nav { display: flex; align-items: center; gap: .35rem; }
-/* Vodorovné odsadenie položiek je utiahnuté zámerne: sedem položiek, značka
-   a telefón sa musia zmestiť do šírky obsahu (--container mínus okraje),
-   inak by menu vytŕčalo zo stránky. Na mobile sa aj tak prepisuje nižšie. */
+.main-nav { display: flex; align-items: center; gap: .25rem; }
+/* Veľkosť písma aj odsadenie položiek sú utiahnuté zámerne. Do šírky obsahu
+   (--container mínus okraje = 1116 px) sa musí zmestiť značka (231,6 px),
+   dve medzery po 16 px, telefón (133,9 px) a sedem položiek menu — na menu
+   teda zostáva 718,5 px. Rozhoduje ANGLICKÁ verzia, ktorá je dlhšia:
+   „What we offer / English courses / Our philosophy / A visit with us"
+   zaberú o 44 px viac než slovenské názvy.
+
+   Pri pôvodných .97rem/.6rem merala 785,5 px, takže hlavička pretekala
+   z rámca obsahu. Flexbox to riešil tak, že stlačil telefón — v angličtine
+   sa preto ocitol o 46,5 px inde než v slovenčine a jeho text sa orezával.
+   Menu je tu preto o niečo menšie, aby sa aj dlhšia verzia zmestila s asi
+   3 % rezervy; tá je nutná, lebo šírka textu sa medzi systémami a písmami
+   líši o jednotky percent a bez rezervy by sa problém vrátil inde.
+
+   Ak do menu pribudne položka alebo sa predĺži názov, treba tieto hodnoty
+   prepočítať; `scripts/stress_test.js` porovná obe verzie a ohlási sa.
+   Na mobile sa aj tak prepisuje nižšie. */
 .main-nav a {
-  color: var(--c-dark); font-weight: 600; font-size: .97rem;
-  padding: .5rem .6rem; border-radius: 8px; white-space: nowrap;
+  color: var(--c-dark); font-weight: 600; font-size: .9rem;
+  padding: .5rem .45rem; border-radius: 8px; white-space: nowrap;
   transition: background .15s var(--ease), color .15s var(--ease);
 }
 .main-nav a:hover { background: var(--c-bg-tint); color: var(--c-dark); }
@@ -326,16 +371,18 @@ p:last-child { margin-bottom: 0; }
 
 /* Mobilná navigácia: menu sa vysunie spod hlavičky.
    Hranica 1161 px nie je náhodná — je premeraná. Hlavička (značka, sedem
-   položiek menu a telefón) potrebuje v jednom riadku 1149 px po slovensky
-   a 1162 px po anglicky; rozhoduje teda tá dlhšia, anglická. Pri nižšej
-   hranici by sa v pásme medzi ňou a 1162 px hlavička nezmestila a stránka
-   by sa dala posúvať do strany; týkalo by sa to bežného rozlíšenia 1152 px.
+   položiek menu a telefón) sa v jednom riadku zmestí od 1098 px po slovensky
+   a od 1141 px po anglicky; rozhoduje teda tá dlhšia, anglická. Menu sa
+   prepína na hamburger pri 1161 px, čo je o 20 px vyššie — tá rezerva je
+   zámerná, lebo šírka textu sa medzi systémami a písmami líši o jednotky
+   percent. Predtým hlavička potrebovala 1162 px a hranica bola 1161 px,
+   teda bez rezervy; po zúžení menu vyššie sa priestor uvoľnil.
 
    Ako sa premeriava: v tomto pravidle sa dočasne nastaví „max-width: 1px",
    takže desktopová hlavička sa vykreslí pri každej šírke, a potom sa binárnym
-   hľadaním nájde najužšia šírka bez vodorovného pretečenia — v OBOCH jazykoch.
-   Treba to zopakovať po každej zmene počtu položiek menu, ich názvov alebo
-   veľkosti značky. */
+   hľadaním nájde najužšia šírka, pri ktorej sa hlavička ešte zmestí do rámca
+   obsahu — v OBOCH jazykoch. Treba to zopakovať po každej zmene počtu položiek
+   menu, ich názvov alebo veľkosti značky. */
 @media (max-width: 1161px) {
   .nav-toggle { display: inline-flex; }
   .main-nav {

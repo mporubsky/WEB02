@@ -9,15 +9,18 @@
  * Potrebuje Node.js, balík `playwright-core` a Chromium. Server si spúšťa sám,
  * netreba nič naštartovať dopredu.
  *
- * Doplňuje `audit_browser.js`, ktorý kontroluje stránku tak, ako vyzerá.
- * Tento skript ju skúša ROZBIŤ — každý z troch scenárov nižšie odhalil na tomto
- * webe skutočnú chybu v čase, keď všetky ostatné kontroly hlásili zelenú:
+ * Doplňuje `.claude/skills/local-business-website/scripts/audit_browser.js`,
+ * ktorý kontroluje stránku tak, ako vyzerá. Tento skript ju skúša ROZBIŤ —
+ * každý zo scenárov nižšie odhalil na tomto webe skutočnú chybu v čase, keď
+ * všetky ostatné kontroly hlásili zelenú:
  *
  *   1. bežné zobrazenie — pretečenie do šírky na úzkych displejoch
  *   2. zväčšené rozostupy textu podľa WCAG 1.4.12 (návštevník si ich môže
  *      zapnúť v prehliadači) — tu pretiekol zoznam na stránke Ponuka
  *   3. dlhé nezalomiteľné slovo v nadpise — napodobňuje dlhú e-mailovú adresu
  *      alebo zložené slovo; tu pretiekla chybová stránka 404
+ *   4. porovnanie slovenskej a anglickej hlavičky — tu bol nápis BABYLAND
+ *      v angličtine o desatinu menší a telefón o 46 px inde
  *
  * Navyše overuje, že sa pri otvorenom mobilnom menu nedá tabulátorom prejsť
  * za prekryv na skryté odkazy.
@@ -129,7 +132,72 @@ function startServer() {
     }
   }
 
-  // ── 4. zameranie nesmie utiecť za otvorené mobilné menu ────────────────
+  // ── 4. hlavička musí vyzerať v oboch jazykoch rovnako ──────────────────
+  // Značka a telefón sú v oboch jazykoch tie isté prvky, takže musia byť
+  // rovnako veľké a na rovnakom mieste — pri prepnutí jazyka nesmie hlavička
+  // poskočiť. Názvy položiek menu sa líšia, tie sa preto neporovnávajú;
+  // porovnáva sa začiatok menu, ktorý na dĺžke názvov závisieť nemá.
+  //
+  // Zároveň sa kontroluje, že sa hlavička zmestí do rámca obsahu. Keď sa
+  // nezmestí, flexbox stlačí telefón — text sa oreže a v každom jazyku skončí
+  // inde. Presne to sa tu stalo a bez tejto kontroly to nič nezachytilo.
+  {
+    const MERANE = ".brand,.brand__mark,.brand__word,.brand__text,.main-nav,.header-actions,.header-phone";
+    const zmeraj = async (page, href) => {
+      await page.goto(`http://localhost:${PORT}/${href}`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(120);
+      return page.evaluate((sels) => {
+        const out = {};
+        for (const sel of sels.split(",")) {
+          const el = document.querySelector(sel);
+          if (!el) continue;
+          const b = el.getBoundingClientRect();
+          // Poloha sa meria od ľavého okraja rámca obsahu, nie od okraja okna,
+          // aby meranie nezáviselo od šírky okna ani od šírky posuvníka.
+          const inner = document.querySelector(".header-inner");
+          const cs = getComputedStyle(inner), ib = inner.getBoundingClientRect();
+          const contentL = ib.left + parseFloat(cs.paddingLeft);
+          out[sel] = { x: +(b.left - contentL).toFixed(1), w: +b.width.toFixed(1),
+                       h: +b.height.toFixed(1) };
+        }
+        const act = document.querySelector(".header-actions").getBoundingClientRect();
+        const inner = document.querySelector(".header-inner");
+        const cs = getComputedStyle(inner), ib = inner.getBoundingClientRect();
+        out.__presah = +(act.right - (ib.right - parseFloat(cs.paddingRight))).toFixed(1);
+        return out;
+      }, MERANE);
+    };
+
+    for (const width of [1440, 1280, 1180, 1162]) {
+      const context = await browser.newContext({ viewport: { width, height: 800 } });
+      const page = await context.newPage();
+      const sk = await zmeraj(page, "index.html");
+      const en = await zmeraj(page, "en/index.html");
+
+      for (const [jazyk, data] of [["slovenská", sk], ["anglická", en]]) {
+        if (data.__presah > 0.6) {
+          problems.push(`[hlavička @ ${width}px] ${jazyk} hlavička presahuje rámec obsahu ` +
+                        `o ${data.__presah}px — flexbox stlačí telefón a text sa oreže`);
+        }
+      }
+      for (const sel of MERANE.split(",")) {
+        if (sel === ".brand__text") continue;   // šírku určuje popis, ten je v každom jazyku iný
+        if (!sk[sel] || !en[sel]) continue;
+        for (const rozmer of ["x", "w", "h"]) {
+          // .main-nav má v každom jazyku inú šírku — to je v poriadku, líšia sa názvy
+          if (sel === ".main-nav" && rozmer === "w") continue;
+          const rozdiel = +(en[sel][rozmer] - sk[sel][rozmer]).toFixed(1);
+          if (Math.abs(rozdiel) > 0.6) {
+            problems.push(`[hlavička @ ${width}px] ${sel} má v angličtine iné „${rozmer}" ` +
+                          `než v slovenčine (${sk[sel][rozmer]} → ${en[sel][rozmer]}, rozdiel ${rozdiel}px)`);
+          }
+        }
+      }
+      await context.close();
+    }
+  }
+
+  // ── 5. zameranie nesmie utiecť za otvorené mobilné menu ────────────────
   {
     const context = await browser.newContext({
       viewport: { width: 390, height: 800 }, isMobile: true, hasTouch: true,
@@ -171,5 +239,6 @@ function startServer() {
     process.exit(1);
   }
   console.log(`\n✅ Bez problémov — ${SCENARIOS.length} scenáre × ${WIDTHS.length} šírok ` +
-              `× ${PAGES.length} stránok, plus zameranie v mobilnom menu.`);
+              `× ${PAGES.length} stránok, zhoda slovenskej a anglickej hlavičky ` +
+              `a zameranie v mobilnom menu.`);
 })();
