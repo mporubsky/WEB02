@@ -81,7 +81,7 @@ už opravené podľa tabule na dverách a Google Maps.
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité; na mobile sa zväčšujú 3×) | `assets/img/` | Nie, ale odporúčam |
+| 2 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (341 px, zrnité; na mobile sa zväčšujú 3×) | `assets/img/` | Nie, ale odporúčam |
 
 **Už rozhodnuté a opravené:**
 
@@ -148,9 +148,17 @@ Zmeňte **obe** hodnoty — prvá sa zobrazuje, druhá sa vytáča.
 > Fotografie (`.jpg`) sa zámerne neverzujú. Keď meníte fotku, dajte jej **nový
 > názov súboru** — inak ju vracajúci sa návštevník neuvidí.
 
-> **Pozor na dve výnimky.** Otváracie hodiny na anglických stránkach a blok
-> `JSON-LD` na konci `index.html` sa z `config.js` **neplnia** — sú napísané
-> priamo v HTML. Ak zmeníte telefón, adresu alebo hodiny, prepíšte ich aj tam.
+> **Pozor na dve výnimky.** Dve miesta sa z `config.js` **neplnia**:
+>
+> - **Otváracie hodiny na anglických stránkach** — sú napísané v HTML
+>   slovenskej predlohy (`kontakt.html`, `index.html`) a do angličtiny sa
+>   dostanú prekladom. Meňte ich v slovenskom súbore.
+> - **Blok `JSON-LD` pre Google** — je v konštante `JSONLD`
+>   v `scripts/build_site.py`. **Neupravujte ho priamo v `index.html`
+>   ani v `kontakt.html`** — generátor tie súbory prepíše.
+>
+> Keď sa niektoré z nich rozíde s `config.js`, ohlási to
+> `python3 scripts/kontrola.py`.
 
 ### Texty
 

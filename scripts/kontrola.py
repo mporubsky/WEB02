@@ -31,6 +31,7 @@ stráži to, čo je vlastné tomuto projektu:
 """
 import collections
 import html as htmlmod
+import json
 import pathlib
 import re
 import sys
@@ -239,23 +240,37 @@ def check_data_in_sync():
         errors.append("js/config.js sa nepodarilo precitat")
         return
 
-    index = (ROOT / "index.html").read_text(encoding="utf-8")
-    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', index, re.S)
-    if not m:
-        errors.append("index.html: chyba blok application/ld+json pre Google")
-    else:
+    # Blok pre Google je na kazdej stranke, ktora skolku predstavuje. Kontroluju
+    # sa VSETKY najdene bloky, nielen ten na uvodnej stranke — inak by sa druhy
+    # blok mohol rozist s config.js a nikto by sa to nedozvedel.
+    JSONLD_PAGES = ["index.html", "kontakt.html", "en/index.html", "en/contact.html"]
+    for name in JSONLD_PAGES:
+        page = ROOT / name
+        if not page.exists():
+            errors.append(f"{name}: subor chyba")
+            continue
+        m = re.search(r'<script type="application/ld\+json">(.*?)</script>',
+                      page.read_text(encoding="utf-8"), re.S)
+        if not m:
+            errors.append(f"{name}: chyba blok application/ld+json pre Google")
+            continue
         block = m.group(1)
+        try:
+            json.loads(block)
+        except json.JSONDecodeError as exc:
+            errors.append(f"{name}: JSON-LD sa neda precitat ({exc})")
+            continue
         for key, want in (("telephone", cfg.get("phoneHref")), ("email", cfg.get("email"))):
             found = re.search(r'"' + key + r'"\s*:\s*"([^"]*)"', block)
             if want and found and found.group(1) != want:
-                errors.append(f"index.html: JSON-LD {key} je {found.group(1)}, "
+                errors.append(f"{name}: JSON-LD {key} je {found.group(1)}, "
                               f"config.js ma {want}")
         street = cfg.get("showroom", "").split(",")[0].strip()
         if street and street not in block:
-            errors.append(f"index.html: JSON-LD nema adresu z config.js ({street})")
+            errors.append(f"{name}: JSON-LD nema adresu z config.js ({street})")
         for t in re.findall(r"\d{1,2}:\d{2}", cfg.get("hours", "")):
             if t not in block:
-                errors.append(f"index.html: JSON-LD nema cas {t} z config.js")
+                errors.append(f"{name}: JSON-LD nema cas {t} z config.js")
 
     for path in EN_PAGES:
         source = path.read_text(encoding="utf-8")

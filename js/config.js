@@ -9,10 +9,16 @@
      python3 .claude/skills/local-business-website/scripts/bump_assets_version.py
    inak môžu návštevníci ešte dlho vidieť staré údaje z pamäte prehliadača.
 
-   DVE MIESTA, KTORÉ SA ODTIAĽTO NEPLNIA a treba ich prepísať ručne:
-     • otváracie hodiny na anglických stránkach (en/index.html, en/contact.html)
-     • blok „application/ld+json" na konci index.html — číta ho Google
-   ========================================================================= */
+   DVE MIESTA, KTORÉ SA ODTIAĽTO NEPLNIA a treba ich prepísať inde:
+     • otváracie hodiny na anglických stránkach — sú napísané priamo v HTML
+       slovenskej predlohy (napr. kontakt.html), lebo v config.js sú názvy
+       dní po slovensky; prepíšte ich tam a spustite build_site.py
+     • blok „application/ld+json", ktorý číta Google — je v konštante JSONLD
+       v scripts/build_site.py. NEUPRAVUJTE ho v index.html ani v kontakt.html,
+       generátor tie súbory pri najbližšom spustení prepíše.
+
+   Obe miesta stráži scripts/kontrola.py — keď sa rozídu s týmto súborom,
+   ohlási to. ========================================================== */
 
 window.MH_CONFIG = {
 

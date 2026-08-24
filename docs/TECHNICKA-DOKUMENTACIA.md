@@ -9,16 +9,20 @@ Pre bežné úpravy obsahu pozrite **[PRIRUCKA.md](PRIRUCKA.md)**.
 
 ## 1. Čo to je
 
-Statický web bez zostavovania (build). Jedenásť HTML súborov, jeden CSS súbor,
-dva JS súbory. Žiadny framework, žiadny balíčkovací nástroj, žiadne
-`node_modules` v produkcii, žiadna databáza. Web sa dá otvoriť aj priamo
-z disku dvojklikom.
+Statický web. Trinásť HTML súborov, jeden CSS súbor, dva JS súbory. Žiadny
+framework, žiadny balíčkovací nástroj, žiadne `node_modules` v produkcii,
+žiadna databáza. Web sa dá otvoriť aj priamo z disku dvojklikom.
+
+Stránky sa **generujú** skriptom `scripts/build_site.py` (hlavička, pätička,
+`<head>` a celá anglická verzia), ale nejde o build v obvyklom zmysle:
+výstupom sú tie isté HTML súbory, ktoré ležia v repozitári a nasadzujú sa
+tak, ako sú. Nič sa nekompiluje ani nebalí.
 
 | | |
 |---|---|
 | Stránok | 13 (7 slovenských vrátane 404, 6 anglických) |
-| CSS | `css/styles.css`, ~650 riadkov, 18 očíslovaných sekcií |
-| JS | `js/main.js` ~276 riadkov, `js/config.js` ~65 riadkov |
+| CSS | `css/styles.css`, ~710 riadkov, 18 očíslovaných sekcií |
+| JS | `js/main.js` ~276 riadkov, `js/config.js` ~71 riadkov |
 | Obrázky | 4 fotografie JPG, 6 vektorov SVG, 4 ikony PNG |
 | Externé závislosti za behu | **žiadne** — ani písmo, ani knižnica, ani analytika |
 
@@ -55,7 +59,11 @@ V staršom prehliadači bude čitateľný, ale bez niektorých vylepšení.
 │       ├── hero.svg             zástupné pozadie úvodu
 │       ├── og-image.svg → .png   náhľad pri zdieľaní odkazu
 │       └── 4× fotografia .jpg
-├── scripts/kontrola.py     kontrola pravidiel tohto webu
+├── scripts/
+│   ├── build_site.py       ⭐ generuje hlavičku, pätičku a celé en/
+│   ├── kontrola.py         kontrola pravidiel tohto webu
+│   ├── stress_test.js      záťažový test rozloženia + zhoda SK/EN hlavičky
+│   └── aktualizuj_sitemap.py  prepočíta sitemap.xml z histórie gitu
 ├── docs/                   táto dokumentácia
 ├── sitemap.xml · robots.txt · site.webmanifest · netlify.toml · .nojekyll
 └── .claude/skills/…        skill, z ktorého web vznikol, + audítorské skripty
@@ -140,13 +148,20 @@ Hodnoty sa vkladajú výhradne cez `textContent` a `setAttribute`, nikdy cez
 
 ### Čo sa z configu **neplní**
 
-Tri miesta sú napísané ručne, a to zámerne:
+Tri miesta sa z `config.js` neplnia, a to zámerne:
 
 1. **Otváracie hodiny na anglických stránkach** — `config.js` drží slovenské
-   názvy dní.
-2. **Blok `application/ld+json`** v `index.html` — číta ho Google ešte
-   predtým, než sa spustí JavaScript.
-3. **`sitemap.xml`** — statický zoznam adries.
+   názvy dní. Hodiny sú napísané v HTML slovenskej predlohy a do angličtiny
+   sa dostanú prekladom; upravujú sa teda v slovenskom súbore.
+2. **Blok `application/ld+json`** — číta ho Google ešte predtým, než sa spustí
+   JavaScript, takže sa musí vykresliť rovno do HTML. Nie je však písaný
+   ručne v stránkach: je v konštante `JSONLD` v `scripts/build_site.py`
+   a generátor ho vkladá do `index.html`, `kontakt.html` a ich anglických
+   náprotivkov. **Úprava priamo v HTML sa pri najbližšom spustení stratí.**
+3. **`sitemap.xml`** — generuje ho `scripts/aktualizuj_sitemap.py`.
+
+Všetky tri stráži `scripts/kontrola.py`: keď sa telefón, adresa alebo hodiny
+v JSON-LD či v anglických hodinách rozídu s `config.js`, kontrola to ohlási.
 
 ---
 
@@ -338,7 +353,7 @@ väčší než pol pixela nahlási ako chybu.
 rozísť so `config.js` — `scripts/kontrola.py` ich porovnáva a rozchod nahlási.
 Mapa stránok sa už neudržiava ručne, generuje ju `aktualizuj_sitemap.py`.
 
-**Fotografie sú z pôvodného webu, 342 px široké** a po zväčšení zrnité.
+**Fotografie sú z pôvodného webu, 341 px široké** a po zväčšení zrnité.
 Označené sú `width`/`height` podľa skutočnosti, takže layout neskáče, ale
 kvalita je vidieť.
 

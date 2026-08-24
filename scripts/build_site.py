@@ -435,8 +435,12 @@ def footer(lang):
         cross.append(f'          <li><a href="{to_other}{there[0]}" lang="{w["other"]}" '
                      f'hreflang="{w["other"]}">{there[1]}</a></li>')
 
-    legal = ('<span data-mh="business.name">' if lang == "sk"
-             else '<span lang="sk" data-mh="business.name">')
+    # Slovenské vlastné mená v anglickej pätičke sa označia lang="sk", aby ich
+    # čítačka obrazovky nečítala anglickou výslovnosťou. To isté robí
+    # `to_english()` s obsahom stránky — tu to treba zvlášť, lebo pätička
+    # cez preklad neprechádza, skladá sa rovno v cieľovom jazyku.
+    sk_mark = "" if lang == "sk" else ' lang="sk"'
+    legal = f'<span{sk_mark} data-mh="business.name">'
     return f"""<footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -474,7 +478,7 @@ def footer(lang):
         <div class="footer-contact">
           <p><a data-mh-tel href="tel:+421908414091"><span data-mh="business.phone">0908 41 40 91</span></a></p>
           <p><a data-mh-mail href="mailto:info@babyland-centrum.sk"><span data-mh="business.email">info@babyland-centrum.sk</span></a></p>
-          <p><span data-mh="business.showroom.full">Gustáva Mallého 2, 851 01 Bratislava</span></p>
+          <p><span{sk_mark} data-mh="business.showroom.full">Gustáva Mallého 2, 851 01 Bratislava</span></p>
           <p><span{' data-mh="business.hoursShort"' if lang == 'sk' else ''}>{w['hours']}</span></p>
         </div>
       </div>
@@ -585,6 +589,18 @@ def to_english(main_html):
     # V angličtine sa nezalomiteľné medzery po jednopísmenových slovách
     # nepoužívajú (to je pravidlo slovenskej typografie).
     out = out.replace("&nbsp;", " ")
+
+    # Slovenské vlastné mená v anglickom texte — adresa prevádzky, sídlo
+    # a obchodné meno — sa označia lang="sk". WCAG 3.1.2 vlastné mená
+    # nevyžaduje, ale čítačka obrazovky prečíta „Gustáva Mallého" anglickou
+    # výslovnosťou ako nezrozumiteľnú zmes hlások. V pätičke bolo obchodné
+    # meno takto označené od začiatku; toto dorovnáva zvyšok stránky, aby
+    # nebol ten istý reťazec raz označený a inokedy nie.
+    # Značka môže byť <span> aj <b> — na kontaktnej stránke je adresa v <b>,
+    # a práve tá by sa pri hľadaní len podľa <span> ticho vynechala.
+    for cesta in ("business.showroom.full", "business.address.full", "business.name"):
+        out = re.sub(rf'<(span|b)(?![^>]*\blang=)([^>]*\bdata-mh="{re.escape(cesta)}")',
+                     r'<\1 lang="sk"\2', out)
     return out
 
 
@@ -683,7 +699,10 @@ def main():
         source = (ROOT / sk_file).read_text(encoding="utf-8")
         body = re.search(r"<main[^>]*>(.*?)</main>", source, re.S).group(1)
         sk_title, sk_desc, en_title, en_desc = META[sk_file]
-        extra = JSONLD if sk_file == "index.html" else ""
+        # Údaje pre Google idú na úvodnú a kontaktnú stránku — na tie dve,
+        # ktoré škôlku predstavujú a nesú adresu. Oba bloky sú rovnaké vrátane
+        # "@id", čo Googlu hovorí, že ide o tú istú prevádzku, nie o dve.
+        extra = JSONLD if sk_file in ("index.html", "kontakt.html") else ""
 
         # slovenská stránka: obsah ostáva, mení sa len hlavička a pätička
         (ROOT / sk_file).write_text(sk_typography(

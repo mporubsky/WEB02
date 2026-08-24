@@ -102,16 +102,25 @@ maps: { directLink: "https://www.google.com/maps/search/?api=1&query=…" }
 
 ### ⚠ Tri miesta, ktoré sa z `config.js` neplnia
 
-Tieto treba prepísať **ručne**:
+Tieto treba prepísať inde — **nie v hotových HTML stránkach**, tie generátor
+pri najbližšom spustení prepíše:
 
-| Kde | Čo tam je | Súbor |
+| Kde | Čo tam je | Kde to zmeniť |
 |---|---|---|
-| Anglické stránky | otváracie hodiny (`Monday – Friday`) | prekladová mapa v `scripts/build_site.py` |
-| Údaje pre Google | adresa, hodiny, súradnice v bloku `application/ld+json` | `index.html`, hore v `<head>` |
-| Mapa stránok | zoznam adries (dátumy sa dopĺňajú samy) | `scripts/aktualizuj_sitemap.py` |
+| Anglické stránky | otváracie hodiny (`Monday – Friday`) | v slovenskej predlohe (`kontakt.html`, `index.html`); do angličtiny sa prenesú prekladom |
+| Údaje pre Google | adresa, hodiny, súradnice v bloku `application/ld+json` | konštanta `JSONLD` v `scripts/build_site.py` |
+| Mapa stránok | zoznam adries (dátumy sa dopĺňajú samy) | zoznam `PAGES` v `scripts/aktualizuj_sitemap.py` |
 
 Prečo: anglické stránky by inak zobrazovali slovenské názvy dní, a blok pre
-Google číta vyhľadávač ešte predtým, než sa spustí akýkoľvek JavaScript.
+Google číta vyhľadávač ešte predtým, než sa spustí akýkoľvek JavaScript —
+musí byť teda priamo v HTML, nie doplnený cez `config.js`.
+
+Blok pre Google je na štyroch stránkach: `index.html`, `kontakt.html`
+a ich anglických náprotivkoch. Všetky štyri majú rovnaké `"@id"`, čím Googlu
+hovoria, že ide o jednu a tú istú škôlku, nie o štyri.
+
+Po zmene spustite `python3 scripts/kontrola.py` — porovná všetky štyri bloky
+aj anglické hodiny s `config.js` a rozdiel ohlási.
 
 ---
 

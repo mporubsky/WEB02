@@ -145,7 +145,8 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 # CSS a JS majú v odkaze ?v=… (cache-busting), takže tiež môžu ísť na dlhú cache.
-# Po úprave css/ alebo js/ spustite scripts/bump_assets_version.py – zmení sa ?v=
+# Po úprave css/ alebo js/ spustite
+# .claude/skills/local-business-website/scripts/bump_assets_version.py – zmení sa ?v=
 # a prehliadače si stiahnu novú verziu.
 [[headers]]
   for = "/css/*"
