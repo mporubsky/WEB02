@@ -95,7 +95,11 @@
 * { margin: 0; }
 html {
   scroll-behavior: smooth;
+  /* iOS Safari inak pri otočení telefónu na šírku sám zväčší písmo. */
   -webkit-text-size-adjust: 100%;
+  /* Hlavička je prilepená navrchu, takže by po skoku na kotvu prekryla
+     jej začiatok. Toto odsadenie posunie cieľ o výšku hlavičky a ešte
+     o 12 px, aby text nezačínal presne pod jej okrajom. */
   scroll-padding-top: calc(var(--header-h) + 12px);
 }
 body {
@@ -119,6 +123,8 @@ ul, ol { padding-left: 1.15em; }
 button { cursor: pointer; background: none; border: none; font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--c-accent-600); outline-offset: 2px; border-radius: 4px; }
 strong { font-weight: 700; }
+/* „!important" je tu nutné: atribút hidden musí prebiť aj triedu, ktorá
+   prvku nastavuje display (napríklad .btn s display: inline-flex). */
 [hidden] { display: none !important; }
 
 /* Odkaz „Preskočiť na obsah" — pre klávesnicu a čítačky obrazovky.
@@ -280,6 +286,9 @@ p:last-child { margin-bottom: 0; }
     justify-content: center; border: 1px solid var(--c-border); border-radius: 10px;
   }
   .header-phone svg { width: 22px; height: 22px; }
+  /* Číslo sa skryje pre oči, ale zostane v prístupnostnom strome — je to
+     jediný text odkazu, takže bez neho by čítačka obrazovky prečítala len
+     „odkaz". Preto NIE display: none, ale tento štandardný recept. */
   .header-phone span {
     position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -335,7 +344,12 @@ p:last-child { margin-bottom: 0; }
     background: #fff; border-bottom: 1px solid var(--c-border);
     padding: .5rem clamp(1rem,4vw,2rem) 1.25rem;
     box-shadow: var(--shadow-lg);
+    /* −140 %, nie −100 %: menu má tieň, ktorý by pri −100 % zostal visieť
+       pod hlavičkou ako tmavý pruh. */
     transform: translateY(-140%); transition: transform .28s var(--ease);
+    /* dvh, nie vh: na mobile sa pri skrolovaní skrýva lišta prehliadača
+       a vh počíta s tou väčšou výškou — menu by potom presahovalo pod
+       spodný okraj a na jeho koniec by sa nedalo dostať. */
     max-height: calc(100dvh - var(--header-h)); overflow-y: auto;
   }
   .main-nav.is-open { transform: translateY(0); }

@@ -81,8 +81,9 @@ už opravené podľa tabule na dverách a Google Maps.
 | # | Čo | Kde to zmeniť | Blokuje spustenie? |
 |---|---|---|---|
 | 1 | **Telefón** `0908 41 40 91` | `js/config.js` → `business.phone` a `phoneHref` | **Áno** |
-| 2 | **„Výborná poloha, približne 5 minút od centra"** — tvrdenie z pôvodného webu, písané ešte o starej adrese | `ponuka.html`, karta „Kde" | Nie, ale overte |
-| 3 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité) | `assets/img/` | Nie, ale odporúčam |
+| 2 | **„Program pre materské školy SR z roku 1999"** — ten dokument je dnes nahradený Štátnym vzdelávacím programom pre predprimárne vzdelávanie | `filozofia.html` | **Áno** |
+| 3 | **„Nová skupina — špeciálne pre deti do 2 rokov"** a **„Sobotné hravé dopoludnia"** — ponuka z roku 2004; ak už nebežia, zmažem ich | `kurzy.html` | **Áno** |
+| 4 | **Vlastné fotky** — teraz sú tam 4 fotky z pôvodného webu (342 px, zrnité; na mobile sa zväčšujú 3×) | `assets/img/` | Nie, ale odporúčam |
 
 **Otváracie hodiny.** Web uvádza jediné hodiny — `7:30 – 17:30`, prevádzkovú
 dobu z tabule na dverách. Pôvodný web mal `7:00 – 17:00` na slovenskej stránke
@@ -101,6 +102,13 @@ a `8 a.m. – 3 p.m.` na anglickej; ani jedno už neplatí.
   hodinová, večerná, nočná, víkendová, celotýždňová) — ponuka pôvodného
   opatrovateľského centra. Na webe zostáva celodenná opatera v pondelok až
   piatok 7:30 – 17:30.
+- **„Výborná poloha, približne 5 minút od centra"** — písané o starej adrese
+  na Nobelovom námestí. Pre Gustáva Mallého 2 to nikto neoveril.
+- **Zoznam „Pripravujeme napríklad: rozprávkové popoludnia… v lete opekačky…"**
+  — z roku 2004. Dvadsaťdva rokov príprav už nie je plán.
+- **Celú anglickú stránku „Exclusive for Babyland"** (životopis maliara Roberta
+  Tollasta) a **„The Kindergarten Program"** (doslovný výpis z cudzieho
+  kurikulárneho dokumentu) — na vaše želanie a pre zjednotenie oboch verzií.
 
 Ak niečo z toho platí aj dnes, dajte vedieť a doplním to.
 
@@ -138,11 +146,20 @@ Zmeňte **obe** hodnoty — prvá sa zobrazuje, druhá sa vytáča.
 
 ### Texty
 
-Texty sú priamo v HTML súboroch — otvorte príslušný súbor v textovom editore
-a prepíšte, čo treba. Netreba nič inštalovať.
+Slovenské texty sú priamo v HTML súboroch — otvorte príslušný súbor v textovom
+editore a prepíšte, čo je medzi `<main>` a `</main>`. Netreba nič inštalovať.
 
-**Hlavička a pätička sú v každom súbore zvlášť.** Keď ich meníte, zmeňte ich
-rovnako vo všetkých — inak sa stránky začnú od seba líšiť.
+Potom spustite:
+
+```bash
+python3 scripts/build_site.py
+python3 .claude/skills/local-business-website/scripts/bump_assets_version.py
+```
+
+**Hlavičku, pätičku a priečinok `en/` neupravujte ručne** — generujú sa
+a pri spustení skriptu sa prepíšu. Anglické texty sa menia v prekladovej mape
+v `scripts/build_site.py`. Podrobne je to v
+[docs/PRIRUCKA.md](docs/PRIRUCKA.md), body 3 a 8.
 
 ### Fotky
 
@@ -205,8 +222,8 @@ podpriečinka `en/`) do `public_html` alebo `www`.
 
 - [ ] Telefónne číslo je aktuálne a dá sa naň dovolať
 - [ ] Adresa prevádzky sedí a odkaz „Zobraziť na mape" vedie na správne miesto
-- [ ] Doplnené PSČ prevádzky
-- [ ] Otváracie hodiny sú aktuálne — v `config.js` aj na anglických stránkach
+- [ ] Otváracie hodiny sú aktuálne — stačí `config.js`, anglické sa dopočítajú
+- [ ] Rozhodnuté, čo s bodmi 2 a 3 z tabuľky vyššie
 - [ ] Fotky sú vaše a máte súhlas rodičov na zverejnenie tvárí detí
 - [ ] Doména smeruje na nový web
 
@@ -287,11 +304,14 @@ na nej má 2,1 : 1. Pre text a pre tlačidlá s bielym popisom používajte
 (`css`, `site.webmanifest`, `<meta name="theme-color">`, SVG v `assets/`)
 a spustite `audit_browser.js`.
 
-Kontrolné skripty — vlastný je v `scripts/`, ostatné
+Skripty — vlastné sú v `scripts/`, kontrolné zo skillu
 v `.claude/skills/local-business-website/scripts/`:
 
 ```bash
-python3 scripts/kontrola.py                # typografia, nadpisy, mŕtve štýly, alt
+python3 scripts/build_site.py              # zostaví 13 stránok; en/ je preklad sk
+python3 scripts/aktualizuj_sitemap.py      # sitemap.xml, dátumy z histórie gitu
+python3 scripts/kontrola.py                # typografia, nadpisy, mŕtve štýly, zhoda
+node    scripts/stress_test.js             # pokus web rozbiť (3 scenáre × 6 šírok)
 python3 …/bump_assets_version.py           # ?v= podľa obsahu css/js — po každej zmene
 python3 …/audit_html.py         --root .   # odkazy, kotvy, SEO, zástupné texty
 node    …/audit_browser.js      --root .   # pretečenie, kontrast, dotykové plochy

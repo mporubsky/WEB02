@@ -27,14 +27,20 @@ v značkách.
 
 ## 1. Zlaté pravidlo: po každej úprave
 
-Po **každej** zmene v `css/`, `js/` alebo `assets/` spustite v priečinku
-projektu:
+Po **každej** úprave spustite v priečinku projektu tieto dva príkazy —
+v tomto poradí:
 
 ```bash
+python3 scripts/build_site.py
 python3 .claude/skills/local-business-website/scripts/bump_assets_version.py
 ```
 
-Prečo: prehliadače si súbory ukladajú do pamäte, aby sa web načítaval rýchlo.
+**Prvý** prestaví stránky: prepíše hlavičku, pätičku a celú anglickú verziu,
+aby všetkých trinásť stránok zostalo rovnakých. Bez neho by sa slovenská
+a anglická verzia rozišli.
+
+**Druhý** rieši pamäť prehliadača: prehliadače si súbory ukladajú, aby sa web
+načítaval rýchlo.
 Server im hovorí, že si ich môžu nechať **celý rok**. Skript zmení `?v=…`
 v odkazoch na súbory, čím prehliadaču povie „toto je nová verzia, stiahni si
 ju znova".
@@ -199,50 +205,68 @@ k `hero.svg` v `index.html` aj `en/index.html`.
 
 ## 5. Pridanie novej stránky do menu
 
-Toto je najprácnejšia úprava, lebo menu je v každom súbore zvlášť.
+Menu, hlavičku aj pätičku generuje `scripts/build_site.py`, takže stránku
+pridávate **na jednom mieste** — nie do trinástich súborov.
 
 **Postup**
 
-1. **Vytvorte súbor** — skopírujte niektorú existujúcu stránku, napríklad
-   `kurzy.html`, a premenujte ju (`krúžky.html` nie, diakritika v názvoch
-   nepatrí — `kruzky.html`).
-2. **V novom súbore prepíšte** `<title>`, `<meta name="description">`,
-   `<link rel="canonical">`, nadpis `<h1>` a obsah.
-3. **Do menu ju pridajte vo všetkých 11 súboroch.** Nájdite blok:
+1. **Vytvorte slovenský súbor** — skopírujte niektorú existujúcu stránku,
+   napríklad `kurzy.html`, a premenujte ju. Bez diakritiky v názve: nie
+   `krúžky.html`, ale `kruzky.html`.
+2. **Prepíšte v ňom len obsah medzi `<main>` a `</main>`.** Hlavičku, pätičku
+   ani `<head>` neupravujte — skript ich pri prvom spustení prepíše.
+3. **Zapíšte stránku do `scripts/build_site.py`.** Do zoznamu `PAGES` pridajte
+   riadok — sú v ňom štyri údaje: slovenský súbor, anglický súbor, položka
+   v slovenskom menu a položka v anglickom menu:
 
-```html
-<nav class="main-nav" id="main-nav" aria-label="Hlavná navigácia">
-  <a href="index.html">Úvod</a>
-  <a href="ponuka.html">Ponuka</a>
-  …
+```python
+("kruzky.html", "clubs.html", "Krúžky", "Clubs"),
 ```
 
-   a doplňte riadok `<a href="kruzky.html">Krúžky</a>`.
+4. **Doplňte titulok a popis pre Google** do tabuľky `META` v tom istom
+   súbore — štyri hodnoty: slovenský titulok, slovenský popis, anglický
+   titulok, anglický popis:
 
-4. **Na samotnej novej stránke** pridajte jej odkazu `aria-current="page"`:
-   `<a href="kruzky.html" aria-current="page">Krúžky</a>`. To je to, čo
-   podčiarkne aktuálnu položku.
-5. **Do pätičky** (blok „Stránky") pridajte to isté, opäť vo všetkých súboroch.
-6. **Do mapy stránok** doplňte riadok v `scripts/aktualizuj_sitemap.py`
-   do zoznamu `PAGES`:
+```python
+"kruzky.html": (
+    "Krúžky pre deti | BABYLAND Bratislava",
+    "Popis pre Google, do 160 znakov.",
+    "Clubs for children | BABYLAND Bratislava",
+    "The same description in English."),
+```
+
+5. **Doplňte preklady textov** do zoznamu `TRANSLATE` — pre každú slovenskú
+   vetu na novej stránke jednu dvojicu. Ak na niektorú zabudnete, skript vás
+   na to upozorní a skončí chybou.
+6. **Spustite generátor:**
+
+```bash
+python3 scripts/build_site.py
+```
+
+   Vytvorí sa `en/clubs.html`, do menu a pätičky sa doplní nová položka na
+   všetkých stránkach a aktuálna položka sa sama podčiarkne.
+
+7. **Doplňte stránku do mapy stránok** — v `scripts/aktualizuj_sitemap.py`
+   do zoznamu `PAGES` pridajte obidva súbory:
 
 ```python
 ("kruzky.html", "0.7"),
+("en/clubs.html", "0.5"),
 ```
 
-   a spustite `python3 scripts/aktualizuj_sitemap.py`. Dátum poslednej zmeny
-   sa doplní sám z histórie repozitára.
+   a spustite `python3 scripts/aktualizuj_sitemap.py`.
 
-7. **Ak sa stránka volá inak než predtým**, pridajte do `netlify.toml`
-   presmerovanie zo starej adresy — inak dostane každý, kto má na ňu odkaz,
-   chybovú stránku. Vzory sú tam hore, stačí ich skopírovať.
+8. **Ak stránka nahrádza inú**, pridajte do `netlify.toml` presmerovanie zo
+   starej adresy — inak dostane každý, kto má na ňu odkaz, chybovú stránku.
+   Vzory sú tam hore, stačí ich skopírovať.
+9. Spustite kontrolu (bod 10).
 
-8. Spustite kontrolu (bod 10).
-
-> **Pozor na počet položiek.** Menu sa v jednom riadku zmestí do šírky, ktorú
-> má stránka k dispozícii. Po pridaní siedmej a ďalšej položky sa hranica,
-> pod ktorou sa menu mení na hamburger, musí premerať znova — je v
-> `css/styles.css` pri `@media (max-width: 1148px)` a je tam k tomu poznámka.
+> **⚠ Po siedmej položke menu premerajte hranicu hamburgeru.** Menu sa musí
+> zmestiť do jedného riadka; dnes na to treba 1149 px po slovensky a 1162 px
+> po anglicky. Ôsma položka to pretlačí a stránka sa začne dať posúvať do
+> strany na bežných rozlíšeniach. Postup merania je popísaný v komentári
+> v `css/styles.css` pri `@media (max-width: 1161px)`.
 
 ---
 
@@ -259,6 +283,10 @@ Toto je najprácnejšia úprava, lebo menu je v každom súbore zvlášť.
 
 Farba fajočky sa strieda automaticky (oranžová, zelená, žltá, modrá) — netreba
 nič nastavovať.
+
+> **Nová položka potrebuje aj preklad.** Doplňte dvojicu do zoznamu
+> `TRANSLATE` v `scripts/build_site.py` (bod 8) a spustite generátor. Bez toho
+> skript skončí chybou a povie vám, ktorý text ostal slovenský.
 
 **Nová karta** (tri farebné boxy na úvode):
 
@@ -423,9 +451,22 @@ v poriadku — web zámerne nepoužíva cookies ani meranie návštevnosti.
 Otvorte súbor a hľadajte, kde chýba `</p>`, `</div>` alebo `>`. Editor
 VS Code takéto miesto zvýrazní.
 
-**Zmena sa neprejavila** → nespustili ste `bump_assets_version.py` (bod 1),
-alebo si prehliadač drží starú verziu. Vyskúšajte `Ctrl+Shift+R`
-(`Cmd+Shift+R` na Macu).
+**Zmena sa neprejavila** → nespustili ste príkazy z bodu 1, alebo si
+prehliadač drží starú verziu. Vyskúšajte `Ctrl+Shift+R` (`Cmd+Shift+R`
+na Macu).
+
+**Zmena sa stratila** → upravili ste niečo, čo sa generuje: súbor v `en/`,
+hlavičku, pätičku alebo titulok. Generátor to pri spustení prepísal. Zoznam
+takých miest je na konci bodu 3.
+
+**Generátor skončí chybou „NEPRELOŽENÉ ZVYŠKY"** → zmenili ste slovenskú vetu,
+ktorá má v mape `TRANSLATE` svoju dvojicu, ale nezmenili ste tam slovenskú
+polovicu. Skript vypíše, ktoré slová ostali slovenské — nájdite ich v mape
+a opravte (bod 8).
+
+**Kontrola hlási „hlavička sa medzi stránkami líši"** → niekto upravil
+vygenerovaný súbor ručne. Spustite `python3 scripts/build_site.py` a rozdiel
+zmizne.
 
 **Telefón sa zobrazuje starý** → zmenili ste len `phone`, nie `phoneHref`
 (bod 2).

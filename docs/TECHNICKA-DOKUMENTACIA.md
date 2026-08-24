@@ -17,7 +17,7 @@ z disku dvojklikom.
 | | |
 |---|---|
 | Stránok | 13 (7 slovenských vrátane 404, 6 anglických) |
-| CSS | `css/styles.css`, ~620 riadkov, 18 očíslovaných sekcií |
+| CSS | `css/styles.css`, ~650 riadkov, 18 očíslovaných sekcií |
 | JS | `js/main.js` ~276 riadkov, `js/config.js` ~65 riadkov |
 | Obrázky | 4 fotografie JPG, 6 vektorov SVG, 4 ikony PNG |
 | Externé závislosti za behu | **žiadne** — ani písmo, ani knižnica, ani analytika |
@@ -222,9 +222,10 @@ a inokedy je v obale.
 | 480 px | telefón v hlavičke → samotná ikona |
 | 380 px | menšia značka, podnadpis značky sa skryje |
 
-Hranica 1148 px **nie je okrúhle číslo náhodou**. Slovenská hlavička
-(značka + sedem položiek menu + telefón) potrebuje v jednom riadku 1149 px.
-Pri nižšej hranici by sa v pásme medzi ňou a 1149 px hlavička nezmestila
+Hranica 1161 px **nie je okrúhle číslo náhodou**. Hlavička (značka + sedem
+položiek menu + telefón) potrebuje v jednom riadku 1149 px po slovensky
+a 1162 px po anglicky — rozhoduje teda tá dlhšia, anglická.
+Pri nižšej hranici by sa v pásme medzi ňou a 1162 px hlavička nezmestila
 a stránka by sa dala posúvať do strany — týkalo by sa to bežných rozlíšení
 1024 a 1152 px. **Po zmene počtu položiek menu alebo veľkosti značky treba
 hranicu premerať znova.**
