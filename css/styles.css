@@ -583,9 +583,30 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 .site-footer a { color: #DBC8B6; }
 .site-footer a:hover { color: var(--c-accent-300); }
 
+/* Štyri bloky: značka s popisom, Stránky, Škôlka, Kontakt.
+   Obsahu v nich je veľmi nerovnako — Škôlka má dva odkazy, Kontakt štyri
+   riadky — a to je pri mriežke problém: riadok je vždy taký vysoký ako jeho
+   najvyššia bunka, takže pod krátkym stĺpcom ostane diera. */
 .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 1.6rem 2rem; }
-@media (max-width: 880px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* Pod 880 px ide značka s popisom na celú šírku a tri zvyšné bloky ostanú
+   vedľa seba. Najvyšší z nich (Stránky) tak určuje výšku riadka a diera pod
+   „Škôlkou" sa zmenší na dva riadky namiesto celej polovice pätičky. */
+@media (max-width: 880px) {
+  .footer-grid { grid-template-columns: repeat(3, 1fr); }
+  .footer-grid > :nth-child(1) { grid-column: 1 / -1; }
+}
+
+/* Pod 640 px sa už tri stĺpce nezmestia — e-mail by sa lámal uprostred
+   slova. Kontakt preto ide na celú šírku a vedľa seba ostanú dva zoznamy. */
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid > :nth-child(4) { grid-column: 1 / -1; }
+}
+
+/* Na najužších displejoch všetko pod seba — pri dvoch stĺpcoch by sa
+   zalomilo „Na návšteve u nás". */
+@media (max-width: 380px) { .footer-grid { grid-template-columns: 1fr; } }
 
 .footer-about .brand { color: #fff; margin-bottom: 1rem; }
 
@@ -599,9 +620,13 @@ a.contact-item:hover { border-color: var(--c-accent); color: var(--c-text); }
 .footer-contact p { margin-bottom: .45rem; }
 .footer-contact a { display: inline-flex; align-items: center; min-height: 24px; }
 
+/* Odsadenie nad čiarou sa na mobile zmenšuje — pri pevných 2,5 rem tam
+   ostávala prázdna plocha vysoká takmer ako celý riadok textu. */
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,.1); margin-top: 2.5rem;
-  padding-block: 1.4rem; font-size: var(--fs-200); color: #BCA48C;
+  border-top: 1px solid rgba(255,255,255,.1);
+  margin-top: clamp(1.4rem, 3vw, 2.5rem);
+  padding-block: clamp(1rem, 2.2vw, 1.4rem);
+  font-size: var(--fs-200); color: #BCA48C;
 }
 
 /* 18. OBMEDZENIE POHYBU A TLAČ ========================================== */
